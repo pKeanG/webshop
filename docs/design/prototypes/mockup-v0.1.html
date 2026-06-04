@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Webshop GameFi — MVP Mockup v0.1</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#F5F7FA; --surface:#FAFBFC; --card:#FFFFFF; --border:#E5E7EB;
+    --text:#111827; --muted:#6B7280;
+    --green:#00E599; --green-light:#E8FCF5;
+    --blue:#3B82F6; --blue-light:#EFF6FF;
+    --yellow:#FFD700; --pink:#FF6699; --epic:#A55EDB; --rare:#4593EE;
+    --maple:#F2A61A; --yulgang:#E83E8C;
+    --dark:#0A0F14; --darker:#141A22; --darkest:#0E1318;
+    --red:#EF4444; --red-light:#FEE2E2;
+  }
+  html,body{font-family:'Inter','Noto Sans Thai',sans-serif;background:#1f2937;color:var(--text);}
+  body{margin:0;}
+  .frame{width:1440px;height:900px;background:var(--bg);border:1px solid var(--border);position:relative;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.45);}
+  .chip{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.04em;}
+  .pill{display:inline-flex;align-items:center;padding:6px 14px;border-radius:999px;font-size:13px;font-weight:500;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;font-weight:600;cursor:pointer;}
+  .scrollx{overflow-x:auto;}
+  .toc a:hover{color:#fff;background:rgba(0,229,153,.1);}
+  .toc a.active{color:var(--green);background:rgba(0,229,153,.15);border-left:3px solid var(--green);}
+  /* Frame inner reset */
+  .frame *{box-sizing:border-box;}
+  /* Rarity colors */
+  .r-common{background:#9CA3AF;color:#fff;}
+  .r-rare{background:var(--rare);color:#fff;}
+  .r-epic{background:var(--epic);color:#fff;}
+  .r-legendary{background:var(--yellow);color:#1f2937;}
+  /* Section title (above each frame) */
+  .frame-label{color:#fff;}
+  .frame-label .num{color:var(--green);}
+</style>
+</head>
+<body>
+
+<!-- ========================================== -->
+<!-- TOP BAR -->
+<!-- ========================================== -->
+<header class="sticky top-0 z-50 bg-[#0A0F14] border-b border-[#1f2937] px-8 py-4 flex items-center justify-between">
+  <div class="flex items-center gap-3 text-white">
+    <span class="text-[#00E599] font-extrabold text-xl">▲ KUB</span>
+    <span class="font-semibold">Webshop GameFi — MVP Mockup v0.1</span>
+    <span class="chip" style="background:#1f2937;color:#9CA3AF;">Mid-fi · Desktop 1440 · 11 pages</span>
+  </div>
+  <div class="text-sm text-gray-400">BBT × Playpark · 2026-05-14</div>
+</header>
+
+<div class="flex">
+  <!-- ========================================== -->
+  <!-- LEFT TOC -->
+  <!-- ========================================== -->
+  <nav class="toc sticky top-[57px] h-[calc(100vh-57px)] w-64 bg-[#0A0F14] border-r border-[#1f2937] overflow-y-auto text-gray-300 text-sm">
+    <div class="px-5 py-4 text-xs uppercase tracking-wider text-gray-500">Public</div>
+    <a href="#f01" class="block px-5 py-2"><span class="text-gray-500 mr-2">01</span>Landing</a>
+    <div class="px-5 py-4 text-xs uppercase tracking-wider text-gray-500">Auth</div>
+    <a href="#f02" class="block px-5 py-2"><span class="text-gray-500 mr-2">02</span>Login</a>
+    <a href="#f03" class="block px-5 py-2"><span class="text-gray-500 mr-2">03</span>Register + Wallet</a>
+    <div class="px-5 py-4 text-xs uppercase tracking-wider text-gray-500">Game · MapleStory</div>
+    <a href="#f04" class="block px-5 py-2"><span class="text-gray-500 mr-2">04</span>Game Hub</a>
+    <a href="#f05" class="block px-5 py-2"><span class="text-gray-500 mr-2">05</span>Webshop</a>
+    <a href="#f06" class="block px-5 py-2"><span class="text-gray-500 mr-2">06</span>Item Detail · Primary</a>
+    <a href="#f07" class="block px-5 py-2"><span class="text-gray-500 mr-2">07</span>Marketplace P2P</a>
+    <a href="#f08" class="block px-5 py-2"><span class="text-gray-500 mr-2">08</span>NFT Detail · Secondary</a>
+    <div class="px-5 py-4 text-xs uppercase tracking-wider text-gray-500">Profile</div>
+    <a href="#f09" class="block px-5 py-2"><span class="text-gray-500 mr-2">09</span>PlayID Profile</a>
+    <a href="#f10" class="block px-5 py-2"><span class="text-gray-500 mr-2">10</span>Inventory</a>
+    <a href="#f11" class="block px-5 py-2"><span class="text-gray-500 mr-2">11</span>Transactions</a>
+    <div class="px-5 py-6 mt-4 text-xs text-gray-600 border-t border-[#1f2937]">
+      Tip: ใช้ Ctrl/Cmd + scroll<br/>เพื่อ zoom in/out
+    </div>
+  </nav>
+
+  <!-- ========================================== -->
+  <!-- FRAMES -->
+  <!-- ========================================== -->
+  <main class="flex-1 p-12 space-y-16 overflow-x-auto">
+
+  <!-- ====================== 01 LANDING ====================== -->
+  <section id="f01">
+    <div class="frame-label mb-3"><span class="num font-bold text-2xl">01.</span> <span class="text-xl font-semibold">Landing</span> <span class="text-gray-500 text-sm ml-2">/ · Public</span></div>
+    <div class="frame">
+      <!-- Header chrome -->
+      <div class="absolute inset-x-0 top-0 h-[72px] bg-[#0A0F14] flex items-center px-12 gap-8">
+        <span class="text-[#00E599] font-extrabold text-xl">▲ KUB</span>
+        <span class="text-white font-medium">Webshop GameFi</span>
+        <nav class="flex gap-6 text-white text-sm ml-6">
+          <a class="text-white">Home</a><a class="text-gray-400">Games</a><a class="text-gray-400">Marketplace</a>
+        </nav>
+        <div class="flex-1"></div>
+        <div class="bg-[#141A22] rounded-full px-4 py-2 text-gray-400 text-sm w-96">🔍 ค้นหาเกม / item …</div>
+        <div class="bg-[#141A22] rounded-full px-4 py-2 text-[#00E599] font-medium text-sm">💎 120.5 USDT</div>
+        <div class="w-10 h-10 rounded-full bg-purple-500 text-white font-bold flex items-center justify-center">B</div>
+      </div>
+      <!-- Hero -->
+      <div class="absolute inset-x-0 top-[72px] h-[320px] bg-[#141A22] px-24 flex flex-col justify-center">
+        <h1 class="text-white text-5xl font-extrabold leading-tight">เลือกเกมที่คุณรัก · ซื้อ-ขายไอเทมจริงๆ ของคุณ</h1>
+        <p class="text-gray-400 text-lg mt-4">PlayID ใบเดียว เล่นได้ทุกเกม · จ่ายด้วย USDT หรือเงินบาท · ปลอดภัยด้วย KUB Chain</p>
+        <div class="flex gap-4 mt-6">
+          <button class="btn bg-[#00E599] text-[#0A0F14] px-6 py-3">เริ่มเล่นเลย →</button>
+          <button class="btn bg-[#141A22] text-white px-6 py-3 border border-gray-700">ดูเกมทั้งหมด</button>
+        </div>
+      </div>
+      <!-- Section -->
+      <div class="absolute top-[432px] left-24 right-24">
+        <h2 class="text-2xl font-bold">เกมบน Platform</h2>
+        <p class="text-sm text-gray-500">2 เกม · MapleStory + Yulgang (พร้อมเปิดตัว)</p>
+      </div>
+      <!-- Game cards -->
+      <div class="absolute top-[528px] left-24 right-24 grid grid-cols-3 gap-8">
+        <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+          <div class="h-40 bg-[#F2A61A] flex items-center justify-center text-white/60 font-bold">[MapleStory cover]</div>
+          <div class="p-5">
+            <h3 class="font-bold text-lg">MapleStory</h3>
+            <p class="text-xs text-gray-500 mt-1">MMORPG · ผู้เล่น 50K+</p>
+            <p class="text-sm text-[#00E599] font-semibold mt-2">1,240 items</p>
+          </div>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+          <div class="h-40 bg-[#E83E8C] flex items-center justify-center text-white/60 font-bold">[Yulgang cover]</div>
+          <div class="p-5">
+            <h3 class="font-bold text-lg">Yulgang</h3>
+            <p class="text-xs text-gray-500 mt-1">Martial Arts · ผู้เล่น 30K+</p>
+            <p class="text-sm text-[#00E599] font-semibold mt-2">860 items</p>
+          </div>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden opacity-60">
+          <div class="h-40 bg-gray-400 flex items-center justify-center text-white/70 font-bold">[Coming soon]</div>
+          <div class="p-5">
+            <h3 class="font-bold text-lg">Cabal Online</h3>
+            <p class="text-xs text-gray-500 mt-1">Coming Soon</p>
+            <p class="text-sm text-gray-400 mt-2">—</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== 02 LOGIN ====================== -->
+  <section id="f02">
+    <div class="frame-label mb-3"><span class="num font-bold text-2xl">02.</span> <span class="text-xl font-semibold">Login</span> <span class="text-gray-500 text-sm ml-2">/auth/login · Auth</span></div>
+    <div class="frame">
+      <!-- Header chrome -->
+      <div class="absolute inset-x-0 top-0 h-[72px] bg-[#0A0F14] flex items-center px-12 gap-8">
+        <span class="text-[#00E599] font-extrabold text-xl">▲ KUB</span>
+        <span class="text-white font-medium">Webshop GameFi</span>
+      </div>
+      <div class="absolute top-[120px] left-24 right-24 grid grid-cols-[320px_1fr] gap-12">
+        <!-- Side panel -->
+        <div class="bg-[#141A22] rounded-2xl p-8 text-white">
+          <h2 class="text-2xl font-extrabold text-[#00E599]">PlayID</h2>
+          <p class="mt-2">บัญชีเดียว เข้าได้ทุกเกม</p>
+          <ul class="mt-6 space-y-3 text-sm text-gray-300">
+            <li>✓ Wallet สร้างให้อัตโนมัติ</li>
+            <li>✓ รับเงินคืนเป็น USDT</li>
+            <li>✓ Trade ระหว่างผู้เล่นได้</li>
+            <li>✓ ปลอดภัยด้วย KUB Chain</li>
+          </ul>
+        </div>
+        <!-- Login card -->
+        <div class="bg-white border border-gray-200 rounded-2xl p-10 max-w-lg">
+          <h2 class="text-2xl font-bold">ยินดีต้อนรับกลับมา</h2>
+          <p class="text-gray-500 mt-1">เข้าสู่ระบบด้วย PlayID เพื่อช้อปไอเทม</p>
+          <label class="block mt-6 text-sm font-medium">อีเมล</label>
+          <input class="w-full mt-2 px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm" placeholder="you@example.com" />
+          <div class="flex justify-between mt-4">
+            <label class="text-sm font-medium">รหัสผ่าน</label>
+            <a class="text-sm text-[#3B82F6] font-medium">ลืมรหัสผ่าน?</a>
+          </div>
+          <input type="password" class="w-full mt-2 px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm" placeholder="••••••••" />
+          <button class="btn bg-[#00E599] text-[#0A0F14] w-full py-3 mt-6">เข้าสู่ระบบ</button>
+          <div class="flex items-center gap-3 my-5 text-xs text-gray-400"><div class="flex-1 h-px bg-gray-200"></div>หรือ<div class="flex-1 h-px bg-gray-200"></div></div>
+          <div class="grid grid-cols-2 gap-3">
+            <button class="border border-gray-200 rounded-lg py-3 text-sm font-medium">[ Google ]</button>
+            <button class="border border-gray-200 rounded-lg py-3 text-sm font-medium">[ Facebook ]</button>
+            <button class="border border-gray-200 rounded-lg py-3 text-sm font-medium">[ LINE ]</button>
+            <button class="border border-gray-200 rounded-lg py-3 text-sm font-medium">[ Apple ]</button>
+          </div>
+          <p class="text-center mt-6 text-sm text-[#3B82F6] font-medium">ยังไม่มีบัญชี? สมัคร PlayID ฟรี →</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== 03 REGISTER + WALLET ====================== -->
+  <section id="f03">
+    <div class="frame-label mb-3"><span class="num font-bold text-2xl">03.</span> <span class="text-xl font-semibold">Register + Wallet Creation</span> <span class="text-gray-500 text-sm ml-2">/auth/register · Auth</span></div>
+    <div class="frame">
+      <div class="absolute inset-x-0 top-0 h-[72px] bg-[#0A0F14] flex items-center px-12 gap-8">
+        <span class="text-[#00E599] font-extrabold text-xl">▲ KUB</span>
+        <span class="text-white font-medium">Webshop GameFi</span>
+      </div>
+      <div class="absolute top-[120px] left-24 right-24">
+        <h1 class="text-3xl font-bold">สร้างบัญชี PlayID</h1>
+        <p class="text-gray-500 mt-2">3 ขั้นตอนง่ายๆ · Wallet สร้างให้อัตโนมัติ ไม่ต้องจำ seed phrase</p>
+        <!-- Step indicator -->
+        <div class="flex items-center mt-8 mb-10">
+          <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-[#00E599] text-[#0A0F14] font-bold flex items-center justify-center">1</div><span class="font-semibold">เลือกวิธี Login</span></div>
+          <div class="flex-1 h-0.5 bg-gray-200 mx-4"></div>
+          <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 font-bold flex items-center justify-center">2</div><span class="text-gray-500">ยืนยันอีเมล</span></div>
+          <div class="flex-1 h-0.5 bg-gray-200 mx-4"></div>
+          <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 font-bold flex items-center justify-center">3</div><span class="text-gray-500">สร้าง Wallet (auto)</span></div>
+        </div>
+        <div class="grid grid-cols-[1fr_440px] gap-8">
+          <!-- Login methods -->
+          <div class="bg-white border border-gray-200 rounded-2xl p-8">
+            <h2 class="text-xl font-bold">เลือกวิธีสมัคร</h2>
+            <p class="text-sm text-gray-500 mt-1">เลือกบัญชีที่คุณมีอยู่แล้ว — Wallet จะถูกสร้างให้คุณอัตโนมัติ ไม่ต้องดาวน์โหลดอะไรเพิ่ม</p>
+            <div class="mt-6 space-y-3">
+              <button class="w-full flex items-center gap-3 border border-gray-200 rounded-lg px-4 py-3 text-sm font-medium"><div class="w-8 h-8 rounded-full bg-red-500 text-white grid place-items-center font-bold">G</div>Continue with Google<span class="ml-auto text-gray-400">→</span></button>
+              <button class="w-full flex items-center gap-3 border border-gray-200 rounded-lg px-4 py-3 text-sm font-medium"><div class="w-8 h-8 rounded-full bg-[#3B5998] text-white grid place-items-center font-bold">f</div>Continue with Facebook<span class="ml-auto text-gray-400">→</span></button>
+              <button class="w-full flex items-center gap-3 border border-gray-200 rounded-lg px-4 py-3 text-sm font-medium"><div class="w-8 h-8 rounded-full bg-green-600 text-white grid place-items-center font-bold">L</div>Continue with LINE<span class="ml-auto text-gray-400">→</span></button>
+              <button class="w-full flex items-center gap-3 border border-gray-200 rounded-lg px-4 py-3 text-sm font-medium"><div class="w-8 h-8 rounded-full bg-black text-white grid place-items-center font-bold"></div>Continue with Apple<span class="ml-auto text-gray-400">→</span></button>
+              <button class="w-full flex items-center gap-3 border border-gray-200 rounded-lg px-4 py-3 text-sm font-medium"><div class="w-8 h-8 rounded-full bg-gray-500 text-white grid place-items-center font-bold">@</div>ใช้อีเมล + รหัสผ่าน<span class="ml-auto text-gray-400">→</span></button>
+            </div>
+          </div>
+          <!-- Wallet explainer -->
+          <div class="bg-[#141A22] rounded-2xl p-8 text-white">
+            <h3 class="text-lg font-bold text-[#00E599]">💎 Smart Wallet คืออะไร?</h3>
+            <p class="text-sm mt-2">Wallet ของคุณคือบัญชีบน KUB Chain ที่:</p>
+            <ul class="mt-4 space-y-3 text-sm text-gray-300">
+              <li>• เก็บไอเทมในเกมแบบ NFT (เป็นของคุณจริงๆ)</li>
+              <li>• รับ-ส่ง USDT ได้โดยไม่ต้องเสีย gas (เราออกให้)</li>
+              <li>• Recovery ผ่านอีเมล ไม่ต้องจำ seed phrase 12 คำ</li>
+              <li>• Trade ของในเกมกับผู้เล่นอื่นได้ใน Marketplace</li>
+            </ul>
+            <div class="mt-6 p-4 bg-[#0E1318] rounded-lg border border-gray-800">
+              <p class="text-xs font-semibold text-[#00E599]">ℹ️ เทคนิค: ERC-4337 Account Abstraction</p>
+              <p class="text-xs text-gray-400 mt-1">Smart contract wallet · Social login · Gasless · Sponsored by Platform</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== 04 GAME HUB ====================== -->
+  <section id="f04">
+    <div class="frame-label mb-3"><span class="num font-bold text-2xl">04.</span> <span class="text-xl font-semibold">Game Hub · MapleStory</span> <span class="text-gray-500 text-sm ml-2">/games/maplestory · Game</span></div>
+    <div class="frame">
+      <div class="absolute inset-x-0 top-0 h-[72px] bg-[#0A0F14] flex items-center px-12 gap-8">
+        <span class="text-[#00E599] font-extrabold text-xl">▲ KUB</span>
+        <span class="text-white font-medium">Webshop GameFi</span>
+        <div class="flex-1"></div>
+        <div class="bg-[#141A22] rounded-full px-4 py-2 text-gray-400 text-sm w-96">🔍 …</div>
+        <div class="bg-[#141A22] rounded-full px-4 py-2 text-[#00E599] font-medium text-sm">💎 120.5 USDT</div>
+        <div class="w-10 h-10 rounded-full bg-purple-500 text-white font-bold flex items-center justify-center">B</div>
+      </div>
+      <!-- Game subnav -->
+      <div class="absolute inset-x-0 top-[72px] h-[56px] bg-[#141A22] flex items-center px-12 gap-6">
+        <span class="chip" style="background:#F2A61A;color:#0A0F14;">MS</span>
+        <span class="text-white font-bold">MapleStory</span>
+        <span class="text-xs text-gray-500">TH Server</span>
+        <nav class="flex gap-8 ml-8 text-sm">
+          <a class="text-[#F2A61A] font-semibold border-b-2 border-[#F2A61A] pb-2">Home</a>
+          <a class="text-gray-400">Shop</a>
+          <a class="text-gray-400">Marketplace</a>
+          <a class="text-gray-400">Inventory</a>
+          <a class="text-gray-400">ข่าวสาร</a>
+        </nav>
+      </div>
+      <!-- Hero -->
+      <div class="absolute inset-x-0 top-[128px] h-[300px] flex items-center px-24" style="background:linear-gradient(120deg,#F2A61A,#cb8b15);">
+        <div>
+          <h1 class="text-5xl font-extrabold text-white">MapleStory TH</h1>
+          <p class="text-white/80 mt-3">ผจญภัยใน Maple World · ซื้อ-เทรดไอเทมจริงกับผู้เล่นทั่วโลก</p>
+          <div class="flex gap-4 mt-6">
+            <button class="btn bg-[#0A0F14] text-[#F2A61A] px-6 py-3">→ เข้า Shop</button>
+            <button class="btn bg-white/15 text-white border border-white px-6 py-3">→ Marketplace (P2P)</button>
+          </div>
+        </div>
+      </div>
+      <!-- Stats -->
+      <div class="absolute top-[460px] left-24 right-24 grid grid-cols-3 gap-6">
+        <div class="bg-white border border-gray-200 rounded-xl p-5"><div class="text-2xl font-bold">1,240</div><div class="text-xs text-gray-500">items in Shop</div></div>
+        <div class="bg-white border border-gray-200 rounded-xl p-5"><div class="text-2xl font-bold">832</div><div class="text-xs text-gray-500">active listings</div></div>
+        <div class="bg-white border border-gray-200 rounded-xl p-5"><div class="text-2xl font-bold">48,210</div><div class="text-xs text-gray-500">active players</div></div>
+      </div>
+      <!-- Featured -->
+      <div class="absolute top-[600px] left-24 right-24">
+        <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">Featured · Webshop</h2><a class="text-sm font-medium text-[#3B82F6]">View all →</a></div>
+        <div class="grid grid-cols-4 gap-6">
+          <div class="bg-white border border-gray-200 rounded-xl p-3"><div class="h-32 bg-[#FFD700] rounded-lg"></div><h4 class="font-semibold mt-3">Royal Crown</h4><div class="chip r-legendary mt-1">LEGENDARY</div><p class="text-sm font-bold text-[#00E599] mt-2">💎 12.5 USDT</p></div>
+          <div class="bg-white border border-gray-200 rounded-xl p-3"><div class="h-32 bg-[#A55EDB] rounded-lg"></div><h4 class="font-semibold mt-3">Phoenix Pet</h4><div class="chip r-epic mt-1">EPIC</div><p class="text-sm font-bold text-[#00E599] mt-2">💎 8.0 USDT</p></div>
+          <div class="bg-white border border-gray-200 rounded-xl p-3"><div class="h-32 bg-[#4593EE] rounded-lg"></div><h4 class="font-semibold mt-3">Magic Cape</h4><div class="chip r-rare mt-1">RARE</div><p class="text-sm font-bold text-[#00E599] mt-2">💎 3.2 USDT</p></div>
+          <div class="bg-white border border-gray-200 rounded-xl p-3"><div class="h-32 bg-[#4593EE] rounded-lg"></div><h4 class="font-semibold mt-3">Speed Boots</h4><div class="chip r-rare mt-1">RARE</div><p class="text-sm font-bold text-[#00E599] mt-2">💎 1.5 USDT</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== 05 WEBSHOP ====================== -->
+  <section id="f05">
+    <div class="frame-label mb-3"><span class="num font-bold text-2xl">05.</span> <span class="text-xl font-semibold">Webshop · MapleStory</span> <span class="text-gray-500 text-sm ml-2">/games/maplestory/shop · Primary Market</span></div>
+    <div class="frame">
+      <div class="absolute inset-x-0 top-0 h-[72px] bg-[#0A0F14] flex items-center px-12 gap-8">
+        <span class="text-[#00E599] font-extrabold text-xl">▲ KUB</span><span class="text-white font-medium">Webshop GameFi</span>
+        <div class="flex-1"></div>
+        <div class="bg-[#141A22] rounded-full px-4 py-2 text-[#00E599] font-medium text-sm">💎 120.5 USDT</div>
+        <div class="w-10 h-10 rounded-full bg-purple-500 text-white font-bold flex items-center justify-center">B</div>
+      </div>
+      <div class="absolute inset-x-0 top-[72px] h-[56px] bg-[#141A22] flex items-center px-12 gap-6">
+        <span class="chip" style="background:#F2A61A;color:#0A0F14;">MS</span><span class="text-white font-bold">MapleStory</span><span class="text-xs text-gray-500">TH Server</span>
+        <nav class="flex gap-8 ml-8 text-sm">
+          <a class="text-gray-400">Home</a><a class="text-[#F2A61A] font-semibold border-b-2 border-[#F2A61A] pb-2">Shop</a><a class="text-gray-400">Marketplace</a><a class="text-gray-400">Inventory</a><a class="text-gray-400">ข่าวสาร</a>
+        </nav>
+      </div>
+      <div class="absolute top-[156px] left-24 right-24">
+        <h1 class="text-2xl font-bold">Webshop · MapleStory</h1>
+        <p class="text-sm text-gray-500 mt-1">Primary Market — ขายโดย Playpark · รับประกันของแท้</p>
+      </div>
+      <div class="absolute top-[244px] left-24 right-24 grid grid-cols-[240px_1fr] gap-6">
+        <!-- Filter sidebar -->
+        <aside class="bg-white border border-gray-200 rounded-xl p-5 self-start">
+          <h3 class="font-bold">ตัวกรอง</h3>
+          <p class="text-xs uppercase tracking-wider text-gray-500 mt-5 mb-2">ประเภท</p>
+          <div class="space-y-2 text-sm">
+            <label class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-[#00E599] text-white text-[10px] grid place-items-center font-bold">✓</span>ทั้งหมด (1240)</label>
+            <label class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-gray-100 border border-gray-300"></span>Equipment (480)</label>
+            <label class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-gray-100 border border-gray-300"></span>Cosmetic (320)</label>
+            <label class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-gray-100 border border-gray-300"></span>Pet (180)</label>
+            <label class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-gray-100 border border-gray-300"></span>Consumable (260)</label>
+          </div>
+          <p class="text-xs uppercase tracking-wider text-gray-500 mt-5 mb-2">ความหายาก</p>
+          <div class="space-y-2 text-sm">
+            <label class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-gray-100 border border-gray-300"></span><span class="w-2 h-2 rounded-full bg-gray-400"></span>Common</label>
+            <label class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-gray-100 border border-gray-300"></span><span class="w-2 h-2 rounded-full bg-[#4593EE]"></span>Rare</label>
+            <label class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-gray-100 border border-gray-300"></span><span class="w-2 h-2 rounded-full bg-[#A55EDB]"></span>Epic</label>
+            <label class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-gray-100 border border-gray-300"></span><span class="w-2 h-2 rounded-full bg-[#FFD700]"></span>Legendary</label>
+          </div>
+          <p class="text-xs uppercase tracking-wider text-gray-500 mt-5 mb-2">ราคา (USDT)</p>
+          <div class="flex gap-2 text-xs"><input class="border border-gray-200 rounded px-2 py-1 w-20" placeholder="Min 0"/><input class="border border-gray-200 rounded px-2 py-1 w-20" placeholder="Max 100"/></div>
+          <button class="btn bg-[#0A0F14] text-white w-full py-2 mt-4 text-sm">Apply Filters</button>
+        </aside>
+        <div>
+          <div class="bg-white border border-gray-200 rounded-xl px-5 py-3 flex items-center text-sm"><span class="text-gray-500">แสดง 1-24 จาก 1,240 รายการ</span><span class="flex-1"></span><span class="text-gray-500">เรียงตาม:</span><span class="ml-2 px-3 py-1 border border-gray-200 rounded-lg">Popular ▾</span></div>
+          <div class="grid grid-cols-4 gap-4 mt-4">
+            <!-- 8 item cards -->
+            <div class="bg-white border border-gray-200 rounded-xl p-3"><div class="h-32 bg-[#FFD700] rounded-lg relative"><span class="chip r-legendary absolute top-2 left-2">LEGENDARY</span></div><h4 class="font-semibold text-sm mt-3">Royal Crown</h4><p class="text-sm font-bold text-[#00E599] mt-1">💎 12.5 USDT</p><p class="text-xs text-gray-500">≈ ฿456</p></div>
+            <div class="bg-white border border-gray-200 rounded-xl p-3"><div class="h-32 bg-[#A55EDB] rounded-lg relative"><span class="chip r-epic absolute top-2 left-2">EPIC</span></div><h4 class="font-semibold text-sm mt-3">Phoenix Pet</h4><p class="text-sm font-bold text-[#00E599] mt-1">💎 8.0 USDT</p><p class="text-xs text-gray-500">≈ ฿292</p></div>
+            <div class="bg-white border border-gray-200 rounded-xl p-3"><div class="h-32 bg-[#A55EDB] rounded-lg relative"><span class="chip r-epic absolute top-2 left-2">EPIC</span></div><h4 class="font-semibold text-sm mt-3">Dragon Sword</h4><p class="text-sm font-bold text-[#00E599] mt-1">💎 7.5 USDT</p><p class="text-xs text-gray-500">≈ ฿274</p></div>
+            <div class="bg-white border border-gray-200 rounded-xl p-3"><div class="h-32 bg-[#4593EE] rounded-lg relative"><span class="chip r-rare absolute top-2 left-2">RARE</span></div><h4 class="font-semibold text-sm mt-3">Magic Cape</h4><p class="text-sm font-bold text-[#00E599] mt-1">💎 3.2 USDT</p><p class="text-xs text-gray-500">≈ ฿117</p></div>
+            <div class="bg-white border border-gray-200 rounded-xl p-3"><div class="h-32 bg-[#4593EE] rounded-lg relative"><span class="chip r-rare absolute top-2 left-2">RARE</span></div><h4 class="font-semibold text-sm mt-3">Speed Boots</h4><p class="text-sm font-bold text-[#00E599] mt-1">💎 1.5 USDT</p><p class="text-xs text-gray-500">≈ ฿55</p></div>
+            <div class="bg-white border border-gray-200 rounded-xl p-3"><div class="h-32 bg-gray-400 rounded-lg relative"><span class="chip r-common absolute top-2 left-2">COMMON</span></div><h4 class="font-semibold text-sm mt-3">EXP Potion x10</h4><p class="text-sm font-bold text-[#00E599] mt-1">💎 0.5 USDT</p><p class="text-xs text-gray-500">≈ ฿18</p></div>
+            <div class="bg-white border border-gray-200 rounded-xl p-3"><div class="h-32 bg-[#A55EDB] rounded-lg relative"><span class="chip r-epic absolute top-2 left-2">EPIC</span></div><h4 class="font-semibold text-sm mt-3">Mount: Wolf</h4><p class="text-sm font-bold text-[#00E599] mt-1">💎 9.0 USDT</p><p class="text-xs text-gray-500">≈ ฿329</p></div>
+            <div class="bg-white border border-gray-200 rounded-xl p-3"><div class="h-32 bg-[#4593EE] rounded-lg relative"><span class="chip r-rare absolute top-2 left-2">RARE</span></div><h4 class="font-semibold text-sm mt-3">Hat: Santa</h4><p class="text-sm font-bold text-[#00E599] mt-1">💎 2.0 USDT</p><p class="text-xs text-gray-500">≈ ฿73</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== 06 ITEM DETAIL PRIMARY ====================== -->
+  <section id="f06">
+    <div class="frame-label mb-3"><span class="num font-bold text-2xl">06.</span> <span class="text-xl font-semibold">Item Detail · Primary <span class="text-[#00E599]">⭐ HERO</span></span> <span class="text-gray-500 text-sm ml-2">/games/maplestory/shop/item/123</span></div>
+    <div class="frame" style="height:1100px">
+      <div class="absolute inset-x-0 top-0 h-[72px] bg-[#0A0F14] flex items-center px-12 gap-8">
+        <span class="text-[#00E599] font-extrabold text-xl">▲ KUB</span><span class="text-white font-medium">Webshop GameFi</span>
+        <div class="flex-1"></div>
+        <div class="bg-[#141A22] rounded-full px-4 py-2 text-[#00E599] font-medium text-sm">💎 120.5 USDT</div>
+        <div class="w-10 h-10 rounded-full bg-purple-500 text-white font-bold flex items-center justify-center">B</div>
+      </div>
+      <div class="absolute inset-x-0 top-[72px] h-[56px] bg-[#141A22] flex items-center px-12 gap-6">
+        <span class="chip" style="background:#F2A61A;color:#0A0F14;">MS</span><span class="text-white font-bold">MapleStory</span>
+        <nav class="flex gap-8 ml-8 text-sm"><a class="text-gray-400">Home</a><a class="text-[#F2A61A] font-semibold border-b-2 border-[#F2A61A] pb-2">Shop</a><a class="text-gray-400">Marketplace</a><a class="text-gray-400">Inventory</a></nav>
+      </div>
+      <p class="absolute top-[148px] left-24 text-xs text-gray-500">MapleStory › Shop › Cosmetic › <span class="text-gray-800 font-medium">Royal Crown</span></p>
+      <!-- Gallery + Info -->
+      <div class="absolute top-[184px] left-24 right-24 grid grid-cols-[560px_1fr] gap-10">
+        <div>
+          <div class="bg-white border border-gray-200 rounded-xl p-5">
+            <div class="h-[380px] bg-[#FFD700] rounded-lg flex items-center justify-center text-black/40 font-medium">[ Item Image · Royal Crown ]</div>
+            <div class="grid grid-cols-4 gap-3 mt-4"><div class="h-12 bg-[#FFD700] rounded"></div><div class="h-12 bg-[#FFD700] rounded"></div><div class="h-12 bg-[#FFD700] rounded"></div><div class="h-12 bg-[#FFD700] rounded"></div></div>
+          </div>
+        </div>
+        <div>
+          <div class="flex gap-2 mb-3"><span class="chip r-legendary">LEGENDARY</span><span class="chip" style="background:#E8FCF5;color:#0a8050;">🔥 เหลือ 23/100</span></div>
+          <h1 class="text-3xl font-bold">Royal Crown</h1>
+          <p class="text-sm text-gray-500 mt-2">Cosmetic · Headgear · One-of-a-kind</p>
+          <p class="text-sm mt-4 max-w-2xl">มงกุฎทองคำสำหรับนักผจญภัยระดับตำนาน ดรอปจาก Royal Event เท่านั้น สวมใส่แล้วจะมีเอฟเฟ็กต์แสงสีทองรอบตัวละคร</p>
+          <div class="flex gap-8 mt-8 text-sm border-b border-gray-200"><a class="text-gray-500 pb-3">Description</a><a class="font-semibold pb-3 border-b-2 border-[#F2A61A]">Stats</a><a class="text-gray-500 pb-3">History (12)</a><a class="text-gray-500 pb-3">Reviews (48)</a></div>
+          <div class="bg-gray-50 border border-gray-200 rounded-xl p-5 mt-5 grid grid-cols-4 divide-x divide-gray-200">
+            <div><p class="text-xs text-gray-500 font-medium">ATK</p><p class="text-2xl font-bold">+50</p></div>
+            <div class="pl-5"><p class="text-xs text-gray-500 font-medium">DEF</p><p class="text-2xl font-bold">+30</p></div>
+            <div class="pl-5"><p class="text-xs text-gray-500 font-medium">HP</p><p class="text-2xl font-bold">+200</p></div>
+            <div class="pl-5"><p class="text-xs text-gray-500 font-medium">MP</p><p class="text-2xl font-bold">+150</p></div>
+          </div>
+          <p class="text-xs text-[#F2A61A] mt-3 font-medium">✨ Special Effect: Golden Aura · Movement Speed +5%</p>
+          <div class="bg-white border border-gray-200 rounded-xl p-5 mt-5 flex items-center"><div><p class="text-xs text-gray-500">ราคา</p><p class="text-2xl font-bold text-[#00E599]">💎 12.5 USDT</p></div><p class="ml-6 text-sm text-gray-500">≈ ฿456</p></div>
+        </div>
+      </div>
+      <!-- Payment picker HERO -->
+      <div class="absolute top-[700px] left-24 right-24">
+        <h2 class="text-xl font-bold">เลือกวิธีชำระเงิน</h2>
+        <div class="grid grid-cols-2 gap-4 mt-4">
+          <div class="rounded-xl p-5 flex items-center gap-4 border-2 border-[#00E599] bg-[#E8FCF5]"><div class="w-6 h-6 rounded-full border-2 border-[#00E599] grid place-items-center"><div class="w-3 h-3 rounded-full bg-[#00E599]"></div></div><span class="text-2xl">💎</span><div class="flex-1"><div class="flex items-center gap-3"><h4 class="font-semibold">USDT (KUB Chain)</h4><span class="chip" style="background:#00E599;color:#0A0F14;">⭐ RECOMMENDED</span></div><p class="text-xs text-gray-600 mt-1">12.5 USDT · ส่วนลด 3% สำหรับ USDT</p></div><span class="text-gray-400 text-xl">›</span></div>
+          <div class="rounded-xl p-5 flex items-center gap-4 border border-gray-200 bg-white"><div class="w-6 h-6 rounded-full border-2 border-gray-300"></div><span class="text-2xl">💳</span><div class="flex-1"><h4 class="font-semibold">Credit / Debit Card</h4><p class="text-xs text-gray-500 mt-1">฿456 · Visa, Mastercard, JCB</p></div><span class="text-gray-400 text-xl">›</span></div>
+          <div class="rounded-xl p-5 flex items-center gap-4 border border-gray-200 bg-white"><div class="w-6 h-6 rounded-full border-2 border-gray-300"></div><span class="text-2xl">📱</span><div class="flex-1"><h4 class="font-semibold">QR PromptPay</h4><p class="text-xs text-gray-500 mt-1">฿456 · สแกนผ่าน mobile banking</p></div><span class="text-gray-400 text-xl">›</span></div>
+          <div class="rounded-xl p-5 flex items-center gap-4 border border-gray-200 bg-white"><div class="w-6 h-6 rounded-full border-2 border-gray-300"></div><span class="text-2xl">🏦</span><div class="flex-1"><h4 class="font-semibold">Bank Transfer</h4><p class="text-xs text-gray-500 mt-1">฿456 · โอนแล้วยืนยันใน 5-15 นาที</p></div><span class="text-gray-400 text-xl">›</span></div>
+        </div>
+        <button class="btn bg-[#00E599] text-[#0A0F14] w-full py-4 mt-6 text-lg font-bold">ซื้อด้วย USDT · 12.5 USDT (≈ ฿456)</button>
+        <p class="text-center text-xs text-gray-500 mt-4">🔒 ปลอดภัยด้วย KUB Chain · ✓ ของแท้รับประกันจาก Playpark · ↺ Refund ภายใน 24 ชม.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== 07 MARKETPLACE ====================== -->
+  <section id="f07">
+    <div class="frame-label mb-3"><span class="num font-bold text-2xl">07.</span> <span class="text-xl font-semibold">Marketplace · P2P</span> <span class="text-gray-500 text-sm ml-2">/games/maplestory/marketplace · Secondary Market</span></div>
+    <div class="frame" style="height:1080px">
+      <div class="absolute inset-x-0 top-0 h-[72px] bg-[#0A0F14] flex items-center px-12 gap-8">
+        <span class="text-[#00E599] font-extrabold text-xl">▲ KUB</span><span class="text-white font-medium">Webshop GameFi</span>
+        <div class="flex-1"></div>
+        <div class="bg-[#141A22] rounded-full px-4 py-2 text-[#00E599] font-medium text-sm">💎 120.5 USDT</div>
+        <div class="w-10 h-10 rounded-full bg-purple-500 text-white font-bold flex items-center justify-center">B</div>
+      </div>
+      <div class="absolute inset-x-0 top-[72px] h-[56px] bg-[#141A22] flex items-center px-12 gap-6">
+        <span class="chip" style="background:#F2A61A;color:#0A0F14;">MS</span><span class="text-white font-bold">MapleStory</span>
+        <nav class="flex gap-8 ml-8 text-sm"><a class="text-gray-400">Home</a><a class="text-gray-400">Shop</a><a class="text-[#F2A61A] font-semibold border-b-2 border-[#F2A61A] pb-2">Marketplace</a><a class="text-gray-400">Inventory</a></nav>
+      </div>
+      <div class="absolute top-[156px] left-24 right-24">
+        <h1 class="text-2xl font-bold">Marketplace · MapleStory</h1>
+        <p class="text-sm text-gray-500 mt-1">P2P Secondary Market — ซื้อ-ขายระหว่างผู้เล่น · ปลอดภัยด้วย Escrow บน KUB Chain</p>
+        <div class="grid grid-cols-4 gap-5 mt-6">
+          <div class="bg-white border border-gray-200 rounded-xl p-4"><div class="text-xl font-bold">832</div><p class="text-xs text-gray-500">Active Listings</p></div>
+          <div class="bg-white border border-gray-200 rounded-xl p-4"><div class="text-xl font-bold">1,420</div><p class="text-xs text-gray-500">Sold (7 วัน)</p></div>
+          <div class="bg-white border border-gray-200 rounded-xl p-4"><div class="text-xl font-bold">8.4 USDT</div><p class="text-xs text-gray-500">Floor Price</p></div>
+          <div class="bg-white border border-gray-200 rounded-xl p-4"><div class="text-xl font-bold">12.3K USDT</div><p class="text-xs text-gray-500">Volume (7d)</p></div>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-xl px-5 py-3 mt-5 flex items-center gap-6 text-sm">
+          <span>ประเภท: <strong>ทั้งหมด</strong> ▾</span><span>ความหายาก: <strong>ทั้งหมด</strong> ▾</span><span>ราคา: <strong>0-100 USDT</strong> ▾</span><span>รับชำระ: <strong>ทุกแบบ</strong> ▾</span>
+          <div class="flex-1"></div>
+          <span class="text-gray-500">เรียงตาม:</span><span class="px-3 py-1 border border-gray-200 rounded-lg">Recent Listed ▾</span><span class="px-2 py-1 border border-gray-200 rounded-lg">Grid ▦</span>
+        </div>
+        <div class="grid grid-cols-4 gap-5 mt-5">
+          <!-- listings -->
+          ${''}
+          <div class="bg-white border border-gray-200 rounded-xl p-3"><div class="h-32 bg-[#FFD700] rounded-lg relative"><span class="chip r-legendary absolute top-2 left-2">LEGENDARY</span><span class="chip absolute top-2 right-2" style="background:#FF6699;color:#fff;">3 offers</span></div><h4 class="font-semibold text-sm mt-3">Royal Crown</h4><p class="text-sm font-bold text-[#00E599] mt-1">💎 10.0 USDT <span class="text-xs text-gray-400 font-normal">≈ ฿365</span></p><div class="flex items-center gap-2 mt-3"><div class="w-6 h-6 rounded-full bg-purple-400"></div><div><p class="text-[11px] font-medium">ProGamer88</p><p class="text-[10px] text-gray-500">★ 4.9 · 2 ชม.</p></div></div></div>
+          <div class="bg-white border border-gray-200 rounded-xl p-3"><div class="h-32 bg-[#A55EDB] rounded-lg relative"><span class="chip r-epic absolute top-2 left-2">EPIC</span><span class="chip absolute top-2 right-2" style="background:#FF6699;color:#fff;">1 offer</span></div><h4 class="font-semibold text-sm mt-3">Dragon Sword</h4><p class="text-sm font-bold text-[#00E599] mt-1">💎 6.5 USDT <span class="text-xs text-gray-400 font-normal">≈ ฿237</span></p><div class="flex items-center gap-2 mt-3"><div class="w-6 h-6 rounded-full bg-purple-400"></div><div><p class="text-[11px] font-medium">MapleKing</p><p class="text-[10px] text-gray-500">★ 4.7 · 5 ชม.</p></div></div></div>
+          <div class="bg-white border border-gray-200 rounded-xl p-3"><div class="h-32 bg-[#A55EDB] rounded-lg relative"><span class="chip r-epic absolute top-2 left-2">EPIC</span><span class="chip absolute top-2 right-2" style="background:#FF6699;color:#fff;">5 offers</span></div><h4 class="font-semibold text-sm mt-3">Phoenix Pet</h4><p class="text-sm font-bold text-[#00E599] mt-1">💎 7.2 USDT <span class="text-xs text-gray-400 font-normal">≈ ฿263</span></p><div class="flex items-center gap-2 mt-3"><div class="w-6 h-6 rounded-full bg-purple-400"></div><div><p class="text-[11px] font-medium">ItemFlipper</p><p class="text-[10px] text-gray-500">★ 4.8 · 1 วัน</p></div></div></div>
+          <div class="bg-white border border-gray-200 rounded-xl p-3"><div class="h-32 bg-[#4593EE] rounded-lg relative"><span class="chip r-rare absolute top-2 left-2">RARE</span></div><h4 class="font-semibold text-sm mt-3">Magic Cape</h4><p class="text-sm font-bold text-[#00E599] mt-1">💎 2.8 USDT <span class="text-xs text-gray-400 font-normal">≈ ฿102</span></p><div class="flex items-center gap-2 mt-3"><div class="w-6 h-6 rounded-full bg-purple-400"></div><div><p class="text-[11px] font-medium">CasualPro</p><p class="text-[10px] text-gray-500">★ 4.5 · 3 ชม.</p></div></div></div>
+          <div class="bg-white border border-gray-200 rounded-xl p-3"><div class="h-32 bg-[#A55EDB] rounded-lg relative"><span class="chip r-epic absolute top-2 left-2">EPIC</span><span class="chip absolute top-2 right-2" style="background:#FF6699;color:#fff;">2 offers</span></div><h4 class="font-semibold text-sm mt-3">Mount: Wolf</h4><p class="text-sm font-bold text-[#00E599] mt-1">💎 8.1 USDT <span class="text-xs text-gray-400 font-normal">≈ ฿296</span></p><div class="flex items-center gap-2 mt-3"><div class="w-6 h-6 rounded-full bg-purple-400"></div><div><p class="text-[11px] font-medium">PetMaster</p><p class="text-[10px] text-gray-500">★ 5.0 · 6 ชม.</p></div></div></div>
+          <div class="bg-white border border-gray-200 rounded-xl p-3"><div class="h-32 bg-[#4593EE] rounded-lg relative"><span class="chip r-rare absolute top-2 left-2">RARE</span></div><h4 class="font-semibold text-sm mt-3">Speed Boots</h4><p class="text-sm font-bold text-[#00E599] mt-1">💎 1.2 USDT <span class="text-xs text-gray-400 font-normal">≈ ฿44</span></p><div class="flex items-center gap-2 mt-3"><div class="w-6 h-6 rounded-full bg-purple-400"></div><div><p class="text-[11px] font-medium">NoobLord</p><p class="text-[10px] text-gray-500">★ 4.2 · 1 วัน</p></div></div></div>
+          <div class="bg-white border border-gray-200 rounded-xl p-3"><div class="h-32 bg-[#4593EE] rounded-lg relative"><span class="chip r-rare absolute top-2 left-2">RARE</span><span class="chip absolute top-2 right-2" style="background:#FF6699;color:#fff;">1 offer</span></div><h4 class="font-semibold text-sm mt-3">Hat: Santa</h4><p class="text-sm font-bold text-[#00E599] mt-1">💎 1.8 USDT <span class="text-xs text-gray-400 font-normal">≈ ฿66</span></p><div class="flex items-center gap-2 mt-3"><div class="w-6 h-6 rounded-full bg-purple-400"></div><div><p class="text-[11px] font-medium">XmasTrader</p><p class="text-[10px] text-gray-500">★ 4.6 · 2 วัน</p></div></div></div>
+          <div class="bg-white border border-gray-200 rounded-xl p-3"><div class="h-32 bg-gray-400 rounded-lg relative"><span class="chip r-common absolute top-2 left-2">COMMON</span></div><h4 class="font-semibold text-sm mt-3">EXP Potion x50</h4><p class="text-sm font-bold text-[#00E599] mt-1">💎 2.0 USDT <span class="text-xs text-gray-400 font-normal">≈ ฿73</span></p><div class="flex items-center gap-2 mt-3"><div class="w-6 h-6 rounded-full bg-purple-400"></div><div><p class="text-[11px] font-medium">BulkSeller</p><p class="text-[10px] text-gray-500">★ 4.9 · 10 นาที</p></div></div></div>
+        </div>
+        <p class="text-center mt-6 text-sm">‹  <strong>1</strong>  2  3  4  5  …  21  ›</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== 08 NFT DETAIL SECONDARY ====================== -->
+  <section id="f08">
+    <div class="frame-label mb-3"><span class="num font-bold text-2xl">08.</span> <span class="text-xl font-semibold">NFT Detail · Secondary</span> <span class="text-gray-500 text-sm ml-2">/games/maplestory/marketplace/456</span></div>
+    <div class="frame" style="height:980px">
+      <div class="absolute inset-x-0 top-0 h-[72px] bg-[#0A0F14] flex items-center px-12 gap-8">
+        <span class="text-[#00E599] font-extrabold text-xl">▲ KUB</span><span class="text-white font-medium">Webshop GameFi</span>
+        <div class="flex-1"></div>
+        <div class="bg-[#141A22] rounded-full px-4 py-2 text-[#00E599] font-medium text-sm">💎 120.5 USDT</div>
+        <div class="w-10 h-10 rounded-full bg-purple-500 text-white font-bold flex items-center justify-center">B</div>
+      </div>
+      <div class="absolute inset-x-0 top-[72px] h-[56px] bg-[#141A22] flex items-center px-12 gap-6">
+        <span class="chip" style="background:#F2A61A;color:#0A0F14;">MS</span><span class="text-white font-bold">MapleStory</span>
+        <nav class="flex gap-8 ml-8 text-sm"><a class="text-gray-400">Home</a><a class="text-gray-400">Shop</a><a class="text-[#F2A61A] font-semibold border-b-2 border-[#F2A61A] pb-2">Marketplace</a><a class="text-gray-400">Inventory</a></nav>
+      </div>
+      <p class="absolute top-[148px] left-24 text-xs text-gray-500">MapleStory › Marketplace › Cosmetic › <span class="text-gray-800 font-medium">Royal Crown #145915</span></p>
+      <div class="absolute top-[184px] left-24 right-24 grid grid-cols-[560px_1fr] gap-10">
+        <div>
+          <div class="bg-white border border-gray-200 rounded-xl p-5"><div class="h-[380px] bg-[#FFD700] rounded-lg flex items-center justify-center text-black/40 font-medium">[ NFT Image · #145915 ]</div></div>
+          <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 mt-3 flex items-center gap-6 text-xs"><div><p class="text-gray-500 font-medium">Token ID</p><p class="font-semibold mt-1">#145915</p></div><div><p class="text-gray-500 font-medium">Contract</p><p class="font-mono font-medium mt-1">0x7D46…6e09f</p></div><a class="ml-auto text-[#3B82F6] font-medium">View on KUB Explorer →</a></div>
+        </div>
+        <div>
+          <div class="flex gap-2"><span class="chip r-legendary">LEGENDARY</span><span class="chip" style="background:#F3E5FF;color:#7C3AED;">1 of 100</span></div>
+          <h1 class="text-3xl font-bold mt-3">Royal Crown #145915</h1>
+          <p class="text-sm text-gray-500 mt-2">Listed by</p>
+          <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 mt-3 flex items-center gap-4">
+            <div class="w-14 h-14 rounded-full bg-purple-500 text-white font-bold grid place-items-center text-xl">P</div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2"><h4 class="font-semibold">ProGamer88</h4><span class="chip" style="background:#E8FCF5;color:#0a8050;">✓ Verified</span></div>
+              <p class="text-xs text-gray-500 mt-1">★ 4.9 · 234 sales · 0% disputes · Joined Jan 2024</p>
+              <p class="text-xs font-mono text-[#3B82F6] mt-1">0xAa12…99BC ⧉</p>
+            </div>
+            <button class="border border-gray-300 rounded-full px-4 py-2 text-xs font-medium">View profile →</button>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-xl p-5 mt-5">
+            <p class="text-xs text-gray-500">Current Price</p>
+            <p class="text-3xl font-bold text-[#00E599] mt-1">💎 10.0 USDT</p>
+            <p class="text-xs text-gray-500 mt-1">≈ ฿365 · Floor: 8.4 USDT</p>
+            <p class="text-xs text-gray-500 mt-2">Last sold: 9.5 USDT (3 วัน) · <span class="text-[#00E599] font-medium">▲ +5.3% (7 วัน)</span></p>
+          </div>
+          <div class="flex gap-3 mt-5">
+            <button class="btn bg-[#00E599] text-[#0A0F14] flex-1 py-3 font-bold">🛒 Buy Now · 10.0 USDT</button>
+            <button class="btn bg-white border-2 border-[#0A0F14] text-[#0A0F14] flex-1 py-3 font-semibold">💬 Make Offer</button>
+          </div>
+          <div class="flex gap-6 mt-6 text-sm border-b border-gray-200"><a class="text-gray-500 pb-3">Properties</a><a class="font-semibold pb-3 border-b-2 border-[#F2A61A]">Price History</a><a class="text-gray-500 pb-3">Tx History (12)</a><a class="text-gray-500 pb-3">Similar</a></div>
+          <div class="bg-gray-50 border border-gray-200 rounded-xl p-5 mt-5">
+            <p class="text-xs text-gray-500 font-medium">Price (30 วัน)</p>
+            <div class="flex items-end gap-1 h-24 mt-3">
+              <div class="bg-[#00E599] flex-1 rounded" style="height:35%"></div>
+              <div class="bg-[#00E599] flex-1 rounded" style="height:45%"></div>
+              <div class="bg-[#00E599] flex-1 rounded" style="height:50%"></div>
+              <div class="bg-[#00E599] flex-1 rounded" style="height:42%"></div>
+              <div class="bg-[#00E599] flex-1 rounded" style="height:58%"></div>
+              <div class="bg-[#00E599] flex-1 rounded" style="height:55%"></div>
+              <div class="bg-[#00E599] flex-1 rounded" style="height:68%"></div>
+              <div class="bg-[#00E599] flex-1 rounded" style="height:74%"></div>
+              <div class="bg-[#00E599] flex-1 rounded" style="height:70%"></div>
+              <div class="bg-[#00E599] flex-1 rounded" style="height:78%"></div>
+              <div class="bg-[#00E599] flex-1 rounded" style="height:85%"></div>
+              <div class="bg-[#00E599] flex-1 rounded" style="height:92%"></div>
+              <div class="bg-[#00E599] flex-1 rounded" style="height:88%"></div>
+            </div>
+            <div class="flex justify-between text-[10px] text-gray-500 mt-2"><span>30 วันก่อน</span><span>วันนี้</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== 09 PROFILE ====================== -->
+  <section id="f09">
+    <div class="frame-label mb-3"><span class="num font-bold text-2xl">09.</span> <span class="text-xl font-semibold">PlayID Profile</span> <span class="text-gray-500 text-sm ml-2">/profile</span></div>
+    <div class="frame">
+      <div class="absolute inset-x-0 top-0 h-[72px] bg-[#0A0F14] flex items-center px-12 gap-8">
+        <span class="text-[#00E599] font-extrabold text-xl">▲ KUB</span><span class="text-white font-medium">Webshop GameFi</span>
+        <div class="flex-1"></div>
+        <div class="bg-[#141A22] rounded-full px-4 py-2 text-[#00E599] font-medium text-sm">💎 120.5 USDT</div>
+        <div class="w-10 h-10 rounded-full bg-purple-500 text-white font-bold flex items-center justify-center">B</div>
+      </div>
+      <div class="absolute top-[120px] left-24 right-24 grid grid-cols-[240px_1fr] gap-8">
+        <aside class="bg-white border border-gray-200 rounded-xl p-3">
+          <a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#E8FCF5] border-l-4 border-[#00E599] font-semibold">👤 Profile</a>
+          <a class="flex items-center gap-3 px-4 py-3 text-gray-500">🎒 Inventory</a>
+          <a class="flex items-center gap-3 px-4 py-3 text-gray-500">📜 Transactions</a>
+          <a class="flex items-center gap-3 px-4 py-3 text-gray-500">💎 Wallet</a>
+          <a class="flex items-center gap-3 px-4 py-3 text-gray-500">⚙️ Settings</a>
+          <a class="flex items-center gap-3 px-4 py-3 text-gray-500">❓ Help</a>
+        </aside>
+        <div>
+          <h1 class="text-2xl font-bold">PlayID Profile</h1>
+          <p class="text-sm text-gray-500 mt-1">ข้อมูลส่วนตัวและ wallet ของคุณ</p>
+          <div class="bg-white border border-gray-200 rounded-xl p-6 mt-5 flex items-center gap-6">
+            <div class="w-28 h-28 rounded-full bg-purple-500 text-white font-bold text-5xl grid place-items-center">B</div>
+            <div class="flex-1">
+              <div class="flex items-center gap-3"><h2 class="text-2xl font-bold">BBT Product Mgmt</h2><span class="chip" style="background:#E8FCF5;color:#0a8050;">✓ Verified</span></div>
+              <p class="text-sm text-gray-500 mt-1">service-bbt-product-management@bitkub.com</p>
+              <p class="text-xs text-gray-500 mt-1">Member since · January 2026</p>
+              <div class="flex gap-6 text-sm mt-3"><span><strong>12</strong> ซื้อทั้งหมด</span><span><strong>3</strong> ขายแล้ว</span><span><strong>★ 5.0</strong></span></div>
+            </div>
+            <button class="border border-gray-300 rounded-full px-4 py-2 text-sm font-medium">Edit Profile</button>
+          </div>
+          <div class="bg-[#141A22] rounded-xl p-6 mt-5 text-white">
+            <div class="flex items-center gap-3"><h3 class="text-lg font-bold text-[#00E599]">💎 Smart Wallet</h3><span class="chip" style="background:#0a3525;color:#00E599;">ERC-4337 · KUB</span></div>
+            <p class="text-xs text-gray-400 mt-4 font-medium">Wallet Address</p>
+            <div class="flex items-center gap-3 mt-2"><p class="font-mono text-sm">0xAb12C9d8E5f0A1b2C3D4e5F6789aBcDeF0123456</p><button class="text-xs px-3 py-1 border border-gray-600 rounded-full">⧉ Copy</button><button class="text-xs px-3 py-1 border border-gray-600 rounded-full text-[#00E599]">↗ View on KUB Explorer</button></div>
+            <p class="text-xs text-gray-400 mt-5 font-medium">Balance</p>
+            <p class="text-4xl font-bold mt-1">120.50 <span class="text-2xl">USDT</span></p>
+            <p class="text-xs text-gray-400 mt-1">≈ ฿4,398.25</p>
+            <div class="flex gap-3 mt-5">
+              <button class="btn bg-[#00E599] text-[#0A0F14] px-5 py-2.5 font-bold">↓ เติม USDT</button>
+              <button class="btn bg-[#1f2937] text-white px-5 py-2.5 border border-gray-700">↑ ถอน USDT</button>
+              <button class="btn bg-[#1f2937] text-white px-5 py-2.5 border border-gray-700">⇄ สลับเป็น THB</button>
+            </div>
+            <p class="text-xs text-gray-400 mt-5">▸ Advanced (Export key, Connect dApp, …)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== 10 INVENTORY ====================== -->
+  <section id="f10">
+    <div class="frame-label mb-3"><span class="num font-bold text-2xl">10.</span> <span class="text-xl font-semibold">Inventory</span> <span class="text-gray-500 text-sm ml-2">/profile/inventory</span></div>
+    <div class="frame" style="height:1000px">
+      <div class="absolute inset-x-0 top-0 h-[72px] bg-[#0A0F14] flex items-center px-12 gap-8">
+        <span class="text-[#00E599] font-extrabold text-xl">▲ KUB</span><span class="text-white font-medium">Webshop GameFi</span>
+        <div class="flex-1"></div>
+        <div class="bg-[#141A22] rounded-full px-4 py-2 text-[#00E599] font-medium text-sm">💎 120.5 USDT</div>
+      </div>
+      <div class="absolute top-[120px] left-24 right-24 grid grid-cols-[240px_1fr] gap-8">
+        <aside class="bg-white border border-gray-200 rounded-xl p-3">
+          <a class="flex items-center gap-3 px-4 py-3 text-gray-500">👤 Profile</a>
+          <a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#E8FCF5] border-l-4 border-[#00E599] font-semibold">🎒 Inventory</a>
+          <a class="flex items-center gap-3 px-4 py-3 text-gray-500">📜 Transactions</a>
+          <a class="flex items-center gap-3 px-4 py-3 text-gray-500">💎 Wallet</a>
+          <a class="flex items-center gap-3 px-4 py-3 text-gray-500">⚙️ Settings</a>
+        </aside>
+        <div>
+          <h1 class="text-2xl font-bold">Inventory</h1>
+          <p class="text-sm text-gray-500 mt-1">ของในกระเป๋าของคุณ · แยกตามเกม · 24 รายการทั้งหมด</p>
+          <div class="flex gap-3 mt-5">
+            <button class="px-5 py-3 bg-[#0A0F14] text-white rounded-full font-semibold text-sm">All Games (24)</button>
+            <button class="px-5 py-3 bg-white border border-gray-200 rounded-full font-medium text-sm">🟧 MapleStory (18)</button>
+            <button class="px-5 py-3 bg-white border border-gray-200 rounded-full font-medium text-sm">🟪 Yulgang (6)</button>
+            <div class="flex-1"></div>
+            <span class="self-center text-sm text-gray-500">เรียงตาม: Recently Acquired ▾</span>
+          </div>
+          <h3 class="font-semibold mt-8 text-lg">🟧 MapleStory</h3>
+          <p class="text-xs text-gray-500">18 items</p>
+          <div class="grid grid-cols-6 gap-3 mt-3">
+            <div class="bg-white border border-gray-200 rounded-lg p-2"><div class="h-24 bg-[#FFD700] rounded relative"><span class="absolute top-1 left-1 bg-[#0A0F14] text-white text-[9px] px-1 rounded">x1</span></div><h5 class="text-xs font-semibold mt-2">Royal Crown</h5><p class="text-[10px] font-bold r-legendary inline-block px-1 mt-1 rounded">LEGENDARY</p><p class="text-[11px] text-[#00E599] font-medium mt-1">~ 12.5 USDT</p><button class="w-full text-[10px] bg-[#E8FCF5] text-[#0a8050] font-semibold py-1 mt-1 rounded">List on Marketplace</button></div>
+            <div class="bg-white border border-gray-200 rounded-lg p-2"><div class="h-24 bg-[#A55EDB] rounded relative"><span class="absolute top-1 left-1 bg-[#0A0F14] text-white text-[9px] px-1 rounded">x1</span></div><h5 class="text-xs font-semibold mt-2">Phoenix Pet</h5><p class="text-[10px] font-bold r-epic inline-block px-1 mt-1 rounded">EPIC</p><p class="text-[11px] text-[#00E599] font-medium mt-1">~ 8.0 USDT</p><button class="w-full text-[10px] bg-[#E8FCF5] text-[#0a8050] font-semibold py-1 mt-1 rounded">List on Marketplace</button></div>
+            <div class="bg-white border border-gray-200 rounded-lg p-2"><div class="h-24 bg-[#4593EE] rounded relative"><span class="absolute top-1 left-1 bg-[#0A0F14] text-white text-[9px] px-1 rounded">x2</span></div><h5 class="text-xs font-semibold mt-2">Magic Cape</h5><p class="text-[10px] font-bold r-rare inline-block px-1 mt-1 rounded">RARE</p><p class="text-[11px] text-[#00E599] font-medium mt-1">~ 3.2 USDT</p><button class="w-full text-[10px] bg-[#E8FCF5] text-[#0a8050] font-semibold py-1 mt-1 rounded">List on Marketplace</button></div>
+            <div class="bg-white border border-gray-200 rounded-lg p-2"><div class="h-24 bg-[#4593EE] rounded relative"><span class="absolute top-1 left-1 bg-[#0A0F14] text-white text-[9px] px-1 rounded">x1</span></div><h5 class="text-xs font-semibold mt-2">Speed Boots</h5><p class="text-[10px] font-bold r-rare inline-block px-1 mt-1 rounded">RARE</p><p class="text-[11px] text-[#00E599] font-medium mt-1">~ 1.5 USDT</p><button class="w-full text-[10px] bg-[#E8FCF5] text-[#0a8050] font-semibold py-1 mt-1 rounded">List on Marketplace</button></div>
+            <div class="bg-white border border-gray-200 rounded-lg p-2"><div class="h-24 bg-gray-400 rounded relative"><span class="absolute top-1 left-1 bg-[#0A0F14] text-white text-[9px] px-1 rounded">x50</span></div><h5 class="text-xs font-semibold mt-2">EXP Potion</h5><p class="text-[10px] font-bold r-common inline-block px-1 mt-1 rounded">COMMON</p><p class="text-[11px] text-[#00E599] font-medium mt-1">~ 0.5 USDT</p><button class="w-full text-[10px] bg-[#E8FCF5] text-[#0a8050] font-semibold py-1 mt-1 rounded">List on Marketplace</button></div>
+            <div class="bg-white border border-gray-200 rounded-lg p-2"><div class="h-24 bg-[#4593EE] rounded relative"><span class="absolute top-1 left-1 bg-[#0A0F14] text-white text-[9px] px-1 rounded">x1</span></div><h5 class="text-xs font-semibold mt-2">Hat: Santa</h5><p class="text-[10px] font-bold r-rare inline-block px-1 mt-1 rounded">RARE</p><p class="text-[11px] text-[#00E599] font-medium mt-1">~ 1.8 USDT</p><button class="w-full text-[10px] bg-[#E8FCF5] text-[#0a8050] font-semibold py-1 mt-1 rounded">List on Marketplace</button></div>
+          </div>
+          <h3 class="font-semibold mt-6 text-lg">🟪 Yulgang</h3>
+          <p class="text-xs text-gray-500">6 items</p>
+          <div class="grid grid-cols-6 gap-3 mt-3">
+            <div class="bg-white border border-gray-200 rounded-lg p-2"><div class="h-24 bg-[#A55EDB] rounded"></div><h5 class="text-xs font-semibold mt-2">Dragon Sword</h5><p class="text-[10px] font-bold r-epic inline-block px-1 mt-1 rounded">EPIC</p><p class="text-[11px] text-gray-500 mt-1">On-chain ✓</p></div>
+            <div class="bg-white border border-gray-200 rounded-lg p-2"><div class="h-24 bg-[#A55EDB] rounded"></div><h5 class="text-xs font-semibold mt-2">Phoenix Costume</h5><p class="text-[10px] font-bold r-epic inline-block px-1 mt-1 rounded">EPIC</p><p class="text-[11px] text-gray-500 mt-1">On-chain ✓</p></div>
+            <div class="bg-white border border-gray-200 rounded-lg p-2"><div class="h-24 bg-[#4593EE] rounded"></div><h5 class="text-xs font-semibold mt-2">Tiger Mount</h5><p class="text-[10px] font-bold r-rare inline-block px-1 mt-1 rounded">RARE</p><p class="text-[11px] text-gray-500 mt-1">On-chain ✓</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== 11 TRANSACTIONS ====================== -->
+  <section id="f11">
+    <div class="frame-label mb-3"><span class="num font-bold text-2xl">11.</span> <span class="text-xl font-semibold">Transaction History</span> <span class="text-gray-500 text-sm ml-2">/profile/transactions</span></div>
+    <div class="frame" style="height:1000px">
+      <div class="absolute inset-x-0 top-0 h-[72px] bg-[#0A0F14] flex items-center px-12 gap-8">
+        <span class="text-[#00E599] font-extrabold text-xl">▲ KUB</span><span class="text-white font-medium">Webshop GameFi</span>
+        <div class="flex-1"></div>
+        <div class="bg-[#141A22] rounded-full px-4 py-2 text-[#00E599] font-medium text-sm">💎 120.5 USDT</div>
+      </div>
+      <div class="absolute top-[120px] left-24 right-24 grid grid-cols-[240px_1fr] gap-8">
+        <aside class="bg-white border border-gray-200 rounded-xl p-3">
+          <a class="flex items-center gap-3 px-4 py-3 text-gray-500">👤 Profile</a>
+          <a class="flex items-center gap-3 px-4 py-3 text-gray-500">🎒 Inventory</a>
+          <a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#E8FCF5] border-l-4 border-[#00E599] font-semibold">📜 Transactions</a>
+          <a class="flex items-center gap-3 px-4 py-3 text-gray-500">💎 Wallet</a>
+          <a class="flex items-center gap-3 px-4 py-3 text-gray-500">⚙️ Settings</a>
+        </aside>
+        <div>
+          <h1 class="text-2xl font-bold">Transaction History</h1>
+          <p class="text-sm text-gray-500 mt-1">ประวัติการซื้อ ขาย โอนเงิน — ทุกธุรกรรมมี audit trail บน KUB Chain</p>
+          <div class="flex gap-3 mt-5 items-center">
+            <button class="px-4 py-2 bg-[#0A0F14] text-white rounded-full font-semibold text-xs">ทั้งหมด (24)</button>
+            <button class="px-4 py-2 bg-white border border-gray-200 rounded-full font-medium text-xs">ซื้อ Primary (12)</button>
+            <button class="px-4 py-2 bg-white border border-gray-200 rounded-full font-medium text-xs">ซื้อ/ขาย Secondary (8)</button>
+            <button class="px-4 py-2 bg-white border border-gray-200 rounded-full font-medium text-xs">Wallet (4)</button>
+            <div class="flex-1"></div>
+            <button class="px-4 py-2 bg-white border border-gray-200 rounded-full font-medium text-xs">📅 30 วันล่าสุด ▾</button>
+          </div>
+          <div class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 mt-5 grid grid-cols-[160px_140px_1fr_140px_100px_100px] gap-3 text-[11px] font-bold uppercase tracking-wider text-gray-500">
+            <span>Date / Time</span><span>Type</span><span>Item / Detail</span><span>Amount</span><span>Status</span><span>Tx Hash</span>
+          </div>
+          <div class="mt-2 space-y-2">
+            <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 grid grid-cols-[160px_140px_1fr_140px_100px_100px] gap-3 items-center text-sm"><span>14 พ.ค. 26 · 14:32</span><span class="chip" style="background:#EFF6FF;color:#3B82F6;">Buy Primary</span><span>Royal Crown · MapleStory</span><span class="font-bold">-12.5 USDT</span><span class="chip" style="background:#E8FCF5;color:#0a8050;">Success</span><a class="text-[#3B82F6] font-mono text-xs">0xa9f3… ↗</a></div>
+            <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 grid grid-cols-[160px_140px_1fr_140px_100px_100px] gap-3 items-center text-sm"><span>14 พ.ค. 26 · 10:18</span><span class="chip" style="background:#FDF2F8;color:#DB2777;">Sell Secondary</span><span>Phoenix Pet · MapleStory</span><span class="font-bold text-[#00E599]">+7.2 USDT</span><span class="chip" style="background:#E8FCF5;color:#0a8050;">Success</span><a class="text-[#3B82F6] font-mono text-xs">0xb721… ↗</a></div>
+            <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 grid grid-cols-[160px_140px_1fr_140px_100px_100px] gap-3 items-center text-sm"><span>13 พ.ค. 26 · 21:45</span><span class="chip" style="background:#F3E5FF;color:#7C3AED;">Buy Secondary</span><span>Dragon Sword · Yulgang</span><span class="font-bold">-6.5 USDT</span><span class="chip" style="background:#E8FCF5;color:#0a8050;">Success</span><a class="text-[#3B82F6] font-mono text-xs">0xc1d8… ↗</a></div>
+            <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 grid grid-cols-[160px_140px_1fr_140px_100px_100px] gap-3 items-center text-sm"><span>13 พ.ค. 26 · 15:02</span><span class="chip" style="background:#E8FCF5;color:#0a8050;">Deposit</span><span>Top-up USDT (Credit Card)</span><span class="font-bold text-[#00E599]">+50.00 USDT</span><span class="chip" style="background:#E8FCF5;color:#0a8050;">Success</span><span class="text-gray-400 text-xs">—</span></div>
+            <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 grid grid-cols-[160px_140px_1fr_140px_100px_100px] gap-3 items-center text-sm"><span>12 พ.ค. 26 · 19:30</span><span class="chip" style="background:#EFF6FF;color:#3B82F6;">Buy Primary</span><span>Mount: Wolf · MapleStory</span><span class="font-bold">-9.0 USDT</span><span class="chip" style="background:#E8FCF5;color:#0a8050;">Success</span><a class="text-[#3B82F6] font-mono text-xs">0xd92a… ↗</a></div>
+            <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 grid grid-cols-[160px_140px_1fr_140px_100px_100px] gap-3 items-center text-sm"><span>12 พ.ค. 26 · 11:08</span><span class="chip" style="background:#EFF6FF;color:#3B82F6;">Buy Primary</span><span>EXP Potion x10 · MapleStory</span><span class="font-bold">-0.5 USDT</span><span class="chip" style="background:#E8FCF5;color:#0a8050;">Success</span><a class="text-[#3B82F6] font-mono text-xs">0xe431… ↗</a></div>
+            <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 grid grid-cols-[160px_140px_1fr_140px_100px_100px] gap-3 items-center text-sm"><span>11 พ.ค. 26 · 16:24</span><span class="chip" style="background:#EFF6FF;color:#3B82F6;">Buy Primary</span><span>Magic Cape · MapleStory</span><span class="font-bold">-3.2 USDT</span><span class="chip" style="background:#FEF3C7;color:#92400e;">Pending</span><a class="text-[#3B82F6] font-mono text-xs">0xf501… ↗</a></div>
+            <div class="bg-white border border-gray-200 rounded-lg px-4 py-3 grid grid-cols-[160px_140px_1fr_140px_100px_100px] gap-3 items-center text-sm"><span>10 พ.ค. 26 · 09:50</span><span class="chip" style="background:#FDF2F8;color:#DB2777;">Sell Secondary</span><span>Hat: Santa · MapleStory</span><span class="font-bold">+1.8 USDT</span><span class="chip" style="background:#FEE2E2;color:#991B1B;">Failed</span><a class="text-[#3B82F6] font-mono text-xs">0xg622… ↗</a></div>
+          </div>
+          <p class="text-center mt-6 text-sm">‹ <strong>1</strong> 2 3 ›</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="text-center text-gray-500 text-xs py-12">
+    Webshop GameFi MVP Mockup v0.1 · Created by PM Agent + UX/UI Designer Agent · 2026-05-14
+  </footer>
+
+  </main>
+</div>
+
+<script>
+  // Highlight active TOC link on scroll
+  const sections = document.querySelectorAll('section[id^="f"]');
+  const links = document.querySelectorAll('.toc a');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const a = document.querySelector('.toc a[href="#' + e.target.id + '"]');
+        if (a) a.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+  sections.forEach(s => obs.observe(s));
+</script>
+</body>
+</html>

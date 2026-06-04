@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 245 247 250;
+  --foreground: 17 24 39;
+}
+
+html,
+body {
+  background-color: rgb(var(--background));
+  color: rgb(var(--foreground));
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Rarity chip helpers (mirrors mockup-v0.1.html .r-* classes) */
+.chip-rarity-common {
+  @apply bg-rarity-common text-white;
+}
+.chip-rarity-rare {
+  @apply bg-rarity-rare text-white;
+}
+.chip-rarity-epic {
+  @apply bg-rarity-epic text-white;
+}
+.chip-rarity-legendary {
+  @apply bg-rarity-legendary text-kub-dark;
+}

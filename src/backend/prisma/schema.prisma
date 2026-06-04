@@ -1,0 +1,166 @@
+// Webshop GameFi — Prisma schema (scaffold)
+// NOTE: no migrations are checked in. Run `prisma migrate dev` locally when ready.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------
+// Users + non-custodial AA wallet (PRD v0.2 §4.1)
+// ---------------------------------------------------------------------
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  // Hashed via bcrypt; null when only social-login (Google/Apple/LINE/FB) is used.
+  passwordHash  String?
+  displayName   String?
+  // PlayID legacy id, if any
+  playId        String?        @unique
+  // KYC tier — 0 = unverified, 1 = email-only, 2 = NDID-verified
+  kycTier       Int            @default(0)
+  // PDPA consent timestamps
+  pdpaAcceptedAt DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  wallet        Wallet?
+  purchases     Purchase[]
+  listings      Listing[]
+  transactions  Transaction[]
+}
+
+model Wallet {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  // Smart-wallet (ERC-4337) address on KUB Chain. Backend NEVER stores the private key.
+  address      String   @unique
+  // Provider: "privy" | "web3auth" | "custom-aa"
+  provider     String
+  deployedTx   String?  // Tx hash of the smart-wallet deployment
+  createdAt    DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id])
+
+  @@index([address])
+}
+
+// ---------------------------------------------------------------------
+// Games & items
+// ---------------------------------------------------------------------
+
+model Game {
+  id          String   @id            // "maplestory", "yulgang", ...
+  name        String
+  brandColor  String   @default("#00E599")
+  itemContract String?               // ERC-1155 contract address on KUB testnet
+  status      String   @default("live") // "live" | "coming-soon"
+  createdAt   DateTime @default(now())
+
+  items       Item[]
+}
+
+model Item {
+  id          String   @id @default(cuid())
+  gameId      String
+  // On-chain token id within the ERC-1155 game-item contract
+  tokenId     String
+  name        String
+  rarity      String   // "common" | "rare" | "epic" | "legendary"
+  category    String   // "equipment" | "cosmetic" | "pet" | "consumable"
+  // Off-chain metadata URI (IPFS or HTTPS)
+  metadataUri String
+  priceUsdt   Decimal  @db.Decimal(36, 6)   // USDT has 6 decimals
+  priceThb    Decimal  @db.Decimal(12, 2)
+  // Primary supply limit; 0 = unlimited
+  supplyCap   Int      @default(0)
+  supplyMinted Int     @default(0)
+  createdAt   DateTime @default(now())
+
+  game        Game       @relation(fields: [gameId], references: [id])
+  listings    Listing[]
+  purchases   Purchase[]
+
+  @@unique([gameId, tokenId])
+  @@index([gameId, rarity])
+}
+
+// ---------------------------------------------------------------------
+// Primary market — purchases
+// ---------------------------------------------------------------------
+
+model Purchase {
+  id           String   @id @default(cuid())
+  userId       String
+  itemId       String
+  quantity     Int      @default(1)
+  // "usdt" | "omise" | "promptpay" | "bank-transfer"
+  method       String
+  // "pending" | "paid" | "minted" | "refunded" | "failed"
+  status       String   @default("pending")
+  amountUsdt   Decimal? @db.Decimal(36, 6)
+  amountThb    Decimal? @db.Decimal(12, 2)
+  // For USDT path: tx hash of USDT receipt + WrapperToken mint
+  paymentTx    String?
+  mintTx       String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user         User     @relation(fields: [userId], references: [id])
+  item         Item     @relation(fields: [itemId], references: [id])
+  transactions Transaction[]
+
+  @@index([userId, status])
+}
+
+// ---------------------------------------------------------------------
+// Secondary market — listings
+// ---------------------------------------------------------------------
+
+model Listing {
+  id           String   @id @default(cuid())
+  sellerId     String
+  itemId       String
+  amount       Int      @default(1)
+  payToken     String   // "USDT" | "WRAPPER"
+  unitPriceUsdt Decimal @db.Decimal(36, 6)
+  // "active" | "sold" | "cancelled" | "expired"
+  status       String   @default("active")
+  onchainId    String?  // bytes32 listingId from IMarketplace
+  startTime    DateTime @default(now())
+  endTime      DateTime?
+
+  seller       User     @relation(fields: [sellerId], references: [id])
+  item         Item     @relation(fields: [itemId], references: [id])
+
+  @@index([itemId, status])
+}
+
+// ---------------------------------------------------------------------
+// Transactions — audit log for ALL financial events (per agent spec §Compliance)
+// ---------------------------------------------------------------------
+
+model Transaction {
+  id           String   @id @default(cuid())
+  userId       String
+  purchaseId   String?
+  // "primary-buy" | "secondary-buy" | "secondary-sell" | "wallet-topup" | "wallet-withdraw"
+  type         String
+  // "success" | "pending" | "failed"
+  status       String   @default("pending")
+  amountUsdt   Decimal? @db.Decimal(36, 6)
+  amountThb    Decimal? @db.Decimal(12, 2)
+  txHash       String?
+  metadata     Json?
+  createdAt    DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id])
+  purchase     Purchase? @relation(fields: [purchaseId], references: [id])
+
+  @@index([userId, createdAt])
+}

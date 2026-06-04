@@ -1,0 +1,40 @@
+{
+  "name": "webshop-gamefi",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Webshop GameFi — KUB Chain × Playpark. Monorepo (frontend + backend + contracts).",
+  "packageManager": "pnpm@9.7.0",
+  "engines": {
+    "node": ">=20.11.0",
+    "pnpm": ">=9.0.0"
+  },
+  "workspaces": [
+    "src/frontend",
+    "src/backend",
+    "src/contracts"
+  ],
+  "scripts": {
+    "dev": "pnpm -r --parallel --filter=@webshop-gamefi/frontend --filter=@webshop-gamefi/backend run dev",
+    "dev:frontend": "pnpm --filter @webshop-gamefi/frontend dev",
+    "dev:backend": "pnpm --filter @webshop-gamefi/backend dev",
+    "build": "pnpm -r run build",
+    "lint": "pnpm -r run lint",
+    "test": "pnpm -r run test",
+    "type-check": "pnpm -r --if-present run type-check",
+    "compose:up": "docker compose up -d postgres redis",
+    "compose:up:tools": "docker compose --profile tools up -d",
+    "compose:down": "docker compose down",
+    "compose:logs": "docker compose logs -f",
+    "prepare": "husky install || true"
+  },
+  "devDependencies": {
+    "husky": "9.1.4",
+    "lint-staged": "15.2.9",
+    "prettier": "3.3.3"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": ["prettier --write"],
+    "*.{json,md,yml,yaml}": ["prettier --write"],
+    "*.sol": ["prettier --write"]
+  }
+}

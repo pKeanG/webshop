@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Concept 2B · PlayMall × KUB Wallet (QR scan)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --pp-blue:#1E88E5;
+    --pp-blue-dark:#1565C0;
+    --pp-blue-light:#5DA9F5;
+    --pp-hero:#2196F3;
+    --pp-orange:#F2A33A;
+    --pp-orange-hover:#E69123;
+    --pp-bg:#F5F5F5;
+    --kub-green:#00E599;
+    --kub-dark:#0A0F14;
+  }
+  html,body{font-family:'Sarabun','Noto Sans Thai',sans-serif;background:var(--pp-bg);margin:0;color:#222;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+  .page{display:none;}
+  .page.active{display:block;}
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px;}
+  .modal-bg.show{display:flex;}
+  .modal{background:#fff;border-radius:12px;max-width:540px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.4);}
+  .modal-header{background:var(--pp-blue);color:#fff;padding:18px 24px;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:space-between;}
+  .modal-close{cursor:pointer;font-size:22px;line-height:1;opacity:.85;}
+  .modal-close:hover{opacity:1;}
+  .modal-body{padding:24px;}
+  .pay-row{padding:14px 0;border-bottom:1px solid #eee;display:flex;align-items:center;gap:14px;cursor:pointer;transition:background .15s;}
+  .pay-row:last-child{border-bottom:0;}
+  .pay-row:hover{background:#fafafa;}
+  .pay-row.kub-row{background:linear-gradient(90deg,rgba(0,229,153,.08),rgba(0,229,153,0));padding:16px 14px;border-radius:8px;border:2px solid var(--kub-green);margin:8px 0;}
+  .radio{width:18px;height:18px;border:2px solid #bbb;border-radius:50%;flex-shrink:0;display:grid;place-items:center;}
+  .pay-row.selected .radio{border-color:var(--pp-blue);}
+  .pay-row.selected .radio::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--pp-blue);}
+  .pay-row.kub-row.selected .radio{border-color:var(--kub-green);}
+  .pay-row.kub-row.selected .radio::after{background:var(--kub-green);}
+  .clickable{cursor:pointer;transition:transform .15s, box-shadow .15s;}
+  .clickable:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.1);}
+  .btn-orange{background:var(--pp-orange);color:#fff;border-radius:6px;font-weight:600;cursor:pointer;transition:background .15s;}
+  .btn-orange:hover{background:var(--pp-orange-hover);}
+  .btn-blue{background:var(--pp-blue);color:#fff;border-radius:6px;font-weight:600;cursor:pointer;}
+  .btn-blue:hover{background:var(--pp-blue-dark);}
+  .btn-kub{background:var(--kub-green);color:var(--kub-dark);border-radius:6px;font-weight:700;cursor:pointer;}
+  .btn-kub:hover{filter:brightness(1.05);}
+  .game-card{cursor:pointer;transition:transform .15s;}
+  .game-card:hover{transform:translateY(-3px);}
+  .pin-box{width:42px;height:48px;border:2px solid #ddd;border-radius:8px;text-align:center;font-size:22px;font-weight:700;color:var(--pp-blue);font-family:'JetBrains Mono',monospace;}
+  .pin-box.filled{border-color:var(--kub-green);background:rgba(0,229,153,.06);}
+  .keypad-btn{width:64px;height:48px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;font-weight:600;font-size:18px;cursor:pointer;transition:background .1s;}
+  .keypad-btn:hover{background:#f3f4f6;}
+  .keypad-btn:active{background:#e5e7eb;}
+  .fade-in{animation:fadeIn .2s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
+  .badge-new{background:var(--kub-green);color:var(--kub-dark);font-weight:800;font-size:10px;padding:2px 6px;border-radius:4px;letter-spacing:.5px;}
+  /* Bitkub NEXT (KUB Wallet) logo — uses real image file from assets/kub-wallet-logo.png */
+  .kub-logo,.kub-logo-dark{background-image:url('assets/kub-wallet-logo.png');background-size:contain;background-position:center;background-repeat:no-repeat;display:inline-block;}
+</style>
+</head>
+<body>
+
+<!-- Concept indicator banner -->
+<div style="background:linear-gradient(90deg,#0A0F14,#1E88E5);" class="text-white px-6 py-2 text-xs flex items-center justify-between">
+  <span><strong>🎨 CONCEPT 2B</strong> · PlayMall + KUB Wallet <strong style="color:#00E599;">QR-scan flow</strong> · ผู้ใช้สแกนจาก mobile app · 15:00 countdown</span>
+  <div class="flex gap-3">
+    <a href="mockup-concept-1.html" class="underline hover:no-underline opacity-80">Concept 1</a>
+    <a href="mockup-concept-2.html" class="underline hover:no-underline opacity-80">Concept 2 (PIN)</a>
+  </div>
+</div>
+
+<!-- ===== PLAYMALL HEADER ===== -->
+<header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a onclick="goTo('landing')" class="cursor-pointer flex items-center gap-1">
+      <span style="color:var(--pp-blue);" class="font-extrabold text-2xl tracking-tight">PLAY</span>
+      <span style="background:var(--pp-blue);" class="text-white rounded-full w-7 h-7 grid place-items-center text-sm font-bold">▶</span>
+      <span style="color:var(--pp-blue);" class="font-extrabold text-2xl tracking-tight">MALL</span>
+    </a>
+    <button class="border border-gray-300 rounded px-4 py-1.5 text-sm hover:bg-gray-50">ภาษาไทย ▾</button>
+  </div>
+</header>
+
+<!-- ============================ -->
+<!-- PAGE 1: LANDING (หน้ารวมเกม) -->
+<!-- ============================ -->
+<main id="landing" class="page active">
+  <div class="max-w-7xl mx-auto px-6 py-6 grid grid-cols-[1fr_320px] gap-6 fade-in">
+    <!-- Main column -->
+    <div>
+      <!-- Hero banner -->
+      <div class="rounded-lg overflow-hidden" style="background:linear-gradient(135deg,#1E88E5,#5DA9F5);">
+        <div class="px-8 py-8 relative">
+          <h1 class="text-white font-extrabold text-5xl tracking-wider" style="text-shadow:0 2px 4px rgba(0,0,0,.15);">G<span style="color:#F2A33A;">A</span>ME</h1>
+          <div class="absolute right-6 top-4 opacity-30 text-white text-7xl">▶</div>
+        </div>
+      </div>
+
+      <!-- Region filter -->
+      <div class="bg-white p-5 mt-4 rounded-lg shadow-sm">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="text-base">🇹🇭</span>
+          <span class="font-semibold">เกมที่ให้บริการในประเทศ</span>
+          <button class="border border-gray-300 rounded px-3 py-1 text-sm">ไทย ▾</button>
+        </div>
+
+        <!-- Game grid -->
+        <div class="grid grid-cols-4 gap-4">
+          <div onclick="openGame('Audition')" class="game-card text-center">
+            <div class="rounded-lg overflow-hidden shadow-sm aspect-square flex items-center justify-center text-3xl font-bold text-white" style="background:linear-gradient(135deg,#FF6B9D,#FFB347);">🎮</div>
+            <div class="mt-2 text-sm font-medium text-gray-700">Gachapon</div>
+          </div>
+          <div onclick="openGame('FLYFF UNIVERSE')" class="game-card text-center">
+            <div class="rounded-lg overflow-hidden shadow-sm aspect-square flex items-center justify-center text-2xl font-bold text-white" style="background:linear-gradient(135deg,#FF9933,#FFC233);">FLYFF</div>
+            <div class="mt-2 text-sm font-medium text-gray-700">FLYFF UNIVERSE</div>
+          </div>
+          <div onclick="openGame('GRAND CHASE CLASSIC')" class="game-card text-center">
+            <div class="rounded-lg overflow-hidden shadow-sm aspect-square flex items-center justify-center text-xl font-bold text-white" style="background:linear-gradient(135deg,#E94560,#F39C12);">GRAND<br/>CHASE</div>
+            <div class="mt-2 text-sm font-medium text-gray-700">GRAND CHASE CLASSIC</div>
+          </div>
+          <div onclick="openGame('Rakion')" class="game-card text-center">
+            <div class="rounded-lg overflow-hidden shadow-sm aspect-square flex items-center justify-center text-2xl font-bold text-white" style="background:linear-gradient(135deg,#1A1A2E,#16213E);">⚔️</div>
+            <div class="mt-2 text-sm font-medium text-gray-700">Rakion</div>
+          </div>
+          <div onclick="openGame('Real Yulgang Classic')" class="game-card text-center">
+            <div class="rounded-lg overflow-hidden shadow-sm aspect-square flex items-center justify-center text-2xl font-bold text-white" style="background:linear-gradient(135deg,#8B4513,#D2691E);">🐉</div>
+            <div class="mt-2 text-sm font-medium text-gray-700">Real Yulgang Classic</div>
+          </div>
+          <div onclick="openGame('Audition')" class="game-card text-center">
+            <div class="rounded-lg overflow-hidden shadow-sm aspect-square flex items-center justify-center text-2xl font-bold text-white" style="background:linear-gradient(135deg,#9B59B6,#E91E63);">💃</div>
+            <div class="mt-2 text-sm font-medium text-gray-700">Audition</div>
+          </div>
+          <div onclick="openGame('ElswordUS')" class="game-card text-center">
+            <div class="rounded-lg overflow-hidden shadow-sm aspect-square flex items-center justify-center text-2xl font-bold text-white" style="background:linear-gradient(135deg,#3F51B5,#9C27B0);">⚔️</div>
+            <div class="mt-2 text-sm font-medium text-gray-700">ElswordUS</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right sidebar -->
+    <aside class="space-y-3">
+      <!-- PlayID box -->
+      <div class="bg-white rounded-lg p-4 shadow-sm">
+        <div class="flex items-center gap-3 pb-3 border-b border-gray-100">
+          <div class="w-14 h-14 rounded-full grid place-items-center text-white text-xs font-bold leading-tight" style="background:linear-gradient(135deg,#5DA9F5,#1E88E5);">
+            PLAY<br/>ID
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="font-semibold text-sm">PlayID : <span class="font-mono">66875683513</span></div>
+            <div class="text-xs text-blue-600 cursor-pointer hover:underline">ประวัติการใช้ PlayMall</div>
+          </div>
+          <button class="text-xs text-gray-500 hover:text-gray-700">🔓 Logout</button>
+        </div>
+        <div class="flex items-center justify-between mt-3">
+          <div>
+            <span class="font-bold text-2xl text-gray-800">0.00</span>
+            <span class="text-sm text-gray-600 ml-1">TH Point ⚙️</span>
+          </div>
+        </div>
+        <button onclick="openTopupModal()" class="btn-orange w-full py-2.5 mt-4 text-base">เติมเงิน</button>
+      </div>
+
+      <!-- Quick links -->
+      <div class="bg-white rounded-lg p-4 shadow-sm space-y-3 text-sm">
+        <a class="flex items-center gap-2 cursor-pointer hover:text-blue-600"><span>😊</span> เกม</a>
+        <a class="flex items-center gap-2 cursor-pointer hover:text-blue-600"><span class="text-blue-500">🏷️</span> เกี่ยวกับ PlayMall</a>
+        <a class="flex items-center gap-2 cursor-pointer text-red-600 hover:text-red-700"><span class="text-red-500">🏷️</span> มีปัญหาการเติมเงิน</a>
+      </div>
+
+      <!-- WebShop banner -->
+      <div class="rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition" style="background:linear-gradient(135deg,#0F2F4F,#1B4E7A);">
+        <div class="p-4 flex items-center justify-between text-white">
+          <div>
+            <div style="color:#5DA9F5;" class="font-bold text-xs">PLAY▶MALL</div>
+            <div class="font-extrabold text-2xl tracking-wide">WEB SHOP</div>
+          </div>
+          <div class="text-3xl opacity-70">🛍️</div>
+        </div>
+      </div>
+
+      <!-- ItemShop banner -->
+      <div class="rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition" style="background:linear-gradient(135deg,#7FC8F8,#3DA5E0);">
+        <div class="p-4 flex items-center justify-between text-white">
+          <div>
+            <div class="font-bold text-xs">PLAYPARK</div>
+            <div class="font-extrabold text-2xl tracking-wide">ITEM SHOP</div>
+          </div>
+          <div class="text-3xl opacity-70">🛒</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<!-- ============================ -->
+<!-- PAGE 2: WEBSHOP (เกม Audition) -->
+<!-- ============================ -->
+<main id="webshop" class="page">
+  <div class="max-w-7xl mx-auto px-6 py-6 grid grid-cols-[1fr_320px] gap-6 fade-in">
+    <div>
+      <!-- Hero banner (same as landing) -->
+      <div class="rounded-lg overflow-hidden mb-4" style="background:linear-gradient(135deg,#1E88E5,#5DA9F5);">
+        <div class="px-8 py-6">
+          <h1 class="text-white font-extrabold text-4xl tracking-wider" style="text-shadow:0 2px 4px rgba(0,0,0,.15);">G<span style="color:#F2A33A;">A</span>ME</h1>
+        </div>
+      </div>
+
+      <!-- Breadcrumb -->
+      <div class="bg-white p-5 rounded-lg shadow-sm">
+        <p class="text-sm text-gray-600 mb-5">
+          <a onclick="goTo('landing')" class="cursor-pointer hover:text-blue-600">หน้าแรก</a>
+          <span class="mx-2">›</span>
+          <strong id="webshop-game-title">Audition</strong>
+        </p>
+
+        <!-- Game info -->
+        <div class="flex items-start gap-5 pb-6 border-b border-gray-100">
+          <div class="w-32 h-32 rounded-lg flex-shrink-0 flex items-center justify-center text-4xl font-bold text-white shadow-sm" style="background:linear-gradient(135deg,#9B59B6,#E91E63);">💃</div>
+          <div>
+            <h2 class="text-3xl font-bold mb-2" id="webshop-game-name">Audition</h2>
+            <p class="text-sm text-gray-500">NO.1 COMMUNITY GAME ONLINE · เกมเต้นยอดฮิตจาก Playpark</p>
+          </div>
+        </div>
+
+        <!-- Cash packages -->
+        <div class="mt-6 space-y-3">
+          <div class="grid grid-cols-[80px_1fr_200px] gap-4 items-center py-3 border-b border-gray-100 hover:bg-gray-50 px-3 rounded">
+            <div class="text-3xl">🪙</div>
+            <div class="font-semibold">2000 Cash</div>
+            <button onclick="selectPackage(20)" class="border border-gray-300 rounded-md py-2.5 text-center hover:border-blue-500 hover:bg-blue-50 cursor-pointer">
+              <span class="font-bold text-gray-700">20.00</span>
+              <span class="text-xs text-gray-500 ml-1">TH Point</span>
+            </button>
+          </div>
+          <div class="grid grid-cols-[80px_1fr_200px] gap-4 items-center py-3 border-b border-gray-100 hover:bg-gray-50 px-3 rounded">
+            <div class="text-3xl">🪙</div>
+            <div class="font-semibold">5000 Cash</div>
+            <button onclick="selectPackage(50)" class="border border-gray-300 rounded-md py-2.5 text-center hover:border-blue-500 hover:bg-blue-50 cursor-pointer">
+              <span class="font-bold text-gray-700">50.00</span>
+              <span class="text-xs text-gray-500 ml-1">TH Point</span>
+            </button>
+          </div>
+          <div class="grid grid-cols-[80px_1fr_200px] gap-4 items-center py-3 border-b border-gray-100 hover:bg-gray-50 px-3 rounded">
+            <div class="text-3xl">🪙</div>
+            <div class="font-semibold">9000 Cash</div>
+            <button onclick="selectPackage(90)" class="border border-gray-300 rounded-md py-2.5 text-center hover:border-blue-500 hover:bg-blue-50 cursor-pointer">
+              <span class="font-bold text-gray-700">90.00</span>
+              <span class="text-xs text-gray-500 ml-1">TH Point</span>
+            </button>
+          </div>
+          <div class="grid grid-cols-[80px_1fr_200px] gap-4 items-center py-3 border-b border-gray-100 hover:bg-gray-50 px-3 rounded">
+            <div class="text-3xl">🪙</div>
+            <div class="font-semibold">10000 Cash</div>
+            <button onclick="selectPackage(100)" class="border border-gray-300 rounded-md py-2.5 text-center hover:border-blue-500 hover:bg-blue-50 cursor-pointer">
+              <span class="font-bold text-gray-700">100.00</span>
+              <span class="text-xs text-gray-500 ml-1">TH Point</span>
+            </button>
+          </div>
+        </div>
+        <p class="text-xs text-gray-500 text-center mt-5">เลือกแพ็คเกจที่ต้องการ แล้วเลือกช่องทางชำระเงิน</p>
+      </div>
+    </div>
+
+    <!-- Right sidebar (same as landing) -->
+    <aside class="space-y-3">
+      <div class="bg-white rounded-lg p-4 shadow-sm">
+        <div class="flex items-center gap-3 pb-3 border-b border-gray-100">
+          <div class="w-14 h-14 rounded-full grid place-items-center text-white text-xs font-bold leading-tight" style="background:linear-gradient(135deg,#5DA9F5,#1E88E5);">
+            PLAY<br/>ID
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="font-semibold text-sm">PlayID : <span class="font-mono">66875683513</span></div>
+            <div class="text-xs text-blue-600 cursor-pointer hover:underline">ประวัติการใช้ PlayMall</div>
+          </div>
+          <button class="text-xs text-gray-500 hover:text-gray-700">🔓 Logout</button>
+        </div>
+        <div class="flex items-center justify-between mt-3">
+          <div><span class="font-bold text-2xl text-gray-800" id="th-point-balance">0.00</span><span class="text-sm text-gray-600 ml-1">TH Point ⚙️</span></div>
+        </div>
+        <button onclick="openTopupModal()" class="btn-orange w-full py-2.5 mt-4 text-base">เติมเงิน</button>
+      </div>
+
+      <div class="bg-white rounded-lg p-4 shadow-sm space-y-3 text-sm">
+        <a class="flex items-center gap-2 cursor-pointer hover:text-blue-600"><span>😊</span> เกม</a>
+        <a class="flex items-center gap-2 cursor-pointer hover:text-blue-600"><span class="text-blue-500">🏷️</span> เกี่ยวกับ PlayMall</a>
+        <a class="flex items-center gap-2 cursor-pointer text-red-600 hover:text-red-700"><span class="text-red-500">🏷️</span> มีปัญหาการเติมเงิน</a>
+      </div>
+
+      <div class="rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition" style="background:linear-gradient(135deg,#0F2F4F,#1B4E7A);">
+        <div class="p-4 flex items-center justify-between text-white">
+          <div>
+            <div style="color:#5DA9F5;" class="font-bold text-xs">PLAY▶MALL</div>
+            <div class="font-extrabold text-2xl tracking-wide">WEB SHOP</div>
+          </div>
+          <div class="text-3xl opacity-70">🛍️</div>
+        </div>
+      </div>
+
+      <div class="rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition" style="background:linear-gradient(135deg,#7FC8F8,#3DA5E0);">
+        <div class="p-4 flex items-center justify-between text-white">
+          <div>
+            <div class="font-bold text-xs">PLAYPARK</div>
+            <div class="font-extrabold text-2xl tracking-wide">ITEM SHOP</div>
+          </div>
+          <div class="text-3xl opacity-70">🛒</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-white py-8 mt-6 border-t border-gray-100">
+  <div class="text-center text-blue-500 font-bold">
+    <span class="inline-flex items-center gap-1">
+      <span style="background:#1E88E5;" class="text-white rounded-full w-6 h-6 grid place-items-center text-xs font-bold">▶</span>
+      PLAYPARK
+    </span>
+  </div>
+</footer>
+
+<!-- ===== KUB ECOSYSTEM TRUST STRIP (mockup-only · pitch material) ===== -->
+<section style="background:#0A0F14;" class="text-white py-10 px-6">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center gap-2 mb-3 px-3 py-1.5 rounded-full" style="background:rgba(0,229,153,.12);border:1px solid rgba(0,229,153,.3);">
+        <div class="kub-logo-dark" style="width:18px;height:18px;"></div>
+        <span class="text-xs font-bold uppercase tracking-wider" style="color:#00E599;">Bitkub Chain Ecosystem</span>
+      </div>
+      <h2 class="text-2xl font-extrabold">KUB Wallet · ใช้แล้วโดยแบรนด์ชั้นนำของไทย</h2>
+      <p class="text-sm text-gray-400 mt-2">Bitkub NEXT · 1M+ users · Bitkub Blockchain Technology Co., Ltd.</p>
+    </div>
+
+    <!-- Trusted Partners Grid -->
+    <div class="grid grid-cols-3 md:grid-cols-7 gap-3 mb-8">
+      <div class="rounded-lg p-3 text-center text-xs font-bold transition hover:scale-105" style="background:#141A22;border:1px solid #1f2937;">
+        <div class="text-2xl mb-1">🎮</div>
+        <div style="color:#00E599;">TSX</div>
+        <div class="text-gray-500 text-[10px] mt-0.5">by Astronize</div>
+      </div>
+      <div class="rounded-lg p-3 text-center text-xs font-bold transition hover:scale-105" style="background:#141A22;border:1px solid #1f2937;">
+        <div class="text-2xl mb-1">🌙</div>
+        <div style="color:#00E599;">Morning Moon</div>
+        <div class="text-gray-500 text-[10px] mt-0.5">Village (GameFi)</div>
+      </div>
+      <div class="rounded-lg p-3 text-center text-xs font-bold transition hover:scale-105" style="background:#141A22;border:1px solid #1f2937;">
+        <div class="text-2xl mb-1">🖼️</div>
+        <div style="color:#00E599;">Bitkub NFT</div>
+        <div class="text-gray-500 text-[10px] mt-0.5">NFT Marketplace</div>
+      </div>
+      <div class="rounded-lg p-3 text-center text-xs font-bold transition hover:scale-105" style="background:#141A22;border:1px solid #1f2937;">
+        <div class="text-2xl mb-1">🌐</div>
+        <div style="color:#00E599;">Bitkub</div>
+        <div class="text-gray-500 text-[10px] mt-0.5">Metaverse</div>
+      </div>
+      <div class="rounded-lg p-3 text-center text-xs font-bold transition hover:scale-105" style="background:#141A22;border:1px solid #1f2937;">
+        <div class="text-2xl mb-1">🛒</div>
+        <div style="color:#00E599;">Villa Market</div>
+        <div class="text-gray-500 text-[10px] mt-0.5">Retail · THBK</div>
+      </div>
+      <div class="rounded-lg p-3 text-center text-xs font-bold transition hover:scale-105" style="background:#141A22;border:1px solid #1f2937;">
+        <div class="text-2xl mb-1">📱</div>
+        <div style="color:#00E599;">Jaymart</div>
+        <div class="text-gray-500 text-[10px] mt-0.5">JFIN Chain</div>
+      </div>
+      <div class="rounded-lg p-3 text-center text-xs font-bold transition hover:scale-105" style="background:#141A22;border:1px solid #1f2937;">
+        <div class="text-2xl mb-1">☕</div>
+        <div style="color:#00E599;">Casa Lapin</div>
+        <div class="text-gray-500 text-[10px] mt-0.5">F&B · THBK</div>
+      </div>
+    </div>
+
+    <!-- Kubplay JV callout -->
+    <div class="rounded-lg p-5" style="background:linear-gradient(90deg,rgba(0,229,153,.08),rgba(30,136,229,.08));border:1px solid rgba(0,229,153,.2);">
+      <div class="flex items-start gap-4 flex-wrap">
+        <span class="text-3xl">💼</span>
+        <div class="flex-1 min-w-0">
+          <div class="font-bold text-base" style="color:#00E599;">Kubplay Entertainment · Precedent ที่พิสูจน์แล้ว</div>
+          <p class="text-sm text-gray-300 mt-2 leading-relaxed">
+            <strong>Asphere Innovations</strong> (Public Company Limited · parent ของ <strong>Playpark</strong>) ร่วมกับ <strong>Bitkub Capital Group Holdings</strong>
+            ก่อตั้ง <strong style="color:#00E599;">Kubplay Entertainment Co., Ltd.</strong> และเปิดตัว
+            <strong style="color:#00E599;">TSX by Astronize</strong> (Three Kingdoms RPG · Open Beta เม.ย. 2024)
+            ที่ใช้ KUB Wallet เป็น primary payment ใน 26 ประเทศ
+          </p>
+          <p class="text-xs text-gray-500 mt-2">
+            👉 PlayMall × KUB Wallet เป็นการต่อยอด partnership ที่มีอยู่แล้ว · ไม่ใช่ greenfield risk
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sources -->
+    <div class="mt-8 pt-6 border-t" style="border-color:#1f2937;">
+      <div class="text-xs font-bold uppercase tracking-wider mb-3" style="color:#00E599;">📚 Sources & Verification</div>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">
+        <a href="https://www.kubchain.com/" target="_blank" class="text-gray-400 hover:text-[#00E599] transition flex items-center gap-2">
+          <span style="color:#00E599;">↗</span>
+          <span>kubchain.com — Bitkub Chain official</span>
+        </a>
+        <a href="https://blogs.bitkubblockchain.com/" target="_blank" class="text-gray-400 hover:text-[#00E599] transition flex items-center gap-2">
+          <span style="color:#00E599;">↗</span>
+          <span>blogs.bitkubblockchain.com — BBT blog</span>
+        </a>
+        <a href="https://www.bitkub.com/th/blog" target="_blank" class="text-gray-400 hover:text-[#00E599] transition flex items-center gap-2">
+          <span style="color:#00E599;">↗</span>
+          <span>bitkub.com/th/blog — Bitkub blog</span>
+        </a>
+        <a href="https://www.kubwallet.com/" target="_blank" class="text-gray-400 hover:text-[#00E599] transition flex items-center gap-2">
+          <span style="color:#00E599;">↗</span>
+          <span>kubwallet.com — KUB Wallet</span>
+        </a>
+        <a href="https://www.bitkubnext.com/" target="_blank" class="text-gray-400 hover:text-[#00E599] transition flex items-center gap-2">
+          <span style="color:#00E599;">↗</span>
+          <span>bitkubnext.com — Bitkub NEXT (1M+ users)</span>
+        </a>
+        <a href="https://www.bitkubblockchain.com/en/programmable-payment-THBK" target="_blank" class="text-gray-400 hover:text-[#00E599] transition flex items-center gap-2">
+          <span style="color:#00E599;">↗</span>
+          <span>Programmable Payment THBK (BOT Sandbox)</span>
+        </a>
+        <a href="https://www.bitkubchain.com/projects" target="_blank" class="text-gray-400 hover:text-[#00E599] transition flex items-center gap-2">
+          <span style="color:#00E599;">↗</span>
+          <span>bitkubchain.com/projects — Ecosystem</span>
+        </a>
+        <a href="https://medium.com/bitkubchainglobal/tsx-by-astronize-the-latest-game-project-on-bitkub-chain-launches-open-beta-today-6ba5d9103e4b" target="_blank" class="text-gray-400 hover:text-[#00E599] transition flex items-center gap-2">
+          <span style="color:#00E599;">↗</span>
+          <span>TSX by Astronize Open Beta (Medium · Apr 2024)</span>
+        </a>
+        <a href="https://playtoearn.com/blockchaingame/morning-moon-village" target="_blank" class="text-gray-400 hover:text-[#00E599] transition flex items-center gap-2">
+          <span style="color:#00E599;">↗</span>
+          <span>Morning Moon Village (Play-to-earn DB)</span>
+        </a>
+      </div>
+      <p class="text-[10px] text-gray-600 mt-4">
+        Disclaimer: หน้า mockup นี้คือ pitch material · Concept 2 (Playpark UX + KUB Wallet) · ข้อมูล partner รายงาน ณ พ.ค. 2026 · จากแหล่งสาธารณะของ Bitkub Blockchain Technology
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ -->
+<!-- MODAL: PAYMENT METHOD PICKER -->
+<!-- ============================ -->
+<div id="payment-modal" class="modal-bg" onclick="closeAllModals(event)">
+  <div class="modal fade-in" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div>
+        <div class="font-bold text-lg">PlayMall</div>
+        <div class="text-xs opacity-90 mt-0.5">เลือกประเภทบัตรเติมเงิน</div>
+      </div>
+      <span class="modal-close" onclick="closeAllModals()">✕</span>
+    </div>
+    <div class="modal-body">
+
+      <!-- USDT — single entry point, wallet chosen in next modal -->
+      <div class="mb-4">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-gray-700">Crypto Payment</span>
+          <span class="badge-new">✨ NEW</span>
+          <span class="text-[10px] text-gray-500">· Bitkub Chain (KUB)</span>
+        </div>
+        <div class="pay-row kub-row" onclick="selectUsdtPayment()">
+          <div class="radio"></div>
+          <!-- USDT (Tether) logo using inline SVG with brand teal -->
+          <div class="w-12 h-12 flex-shrink-0 grid place-items-center" style="border-radius:50%;background:#26A17B;box-shadow:0 1px 3px rgba(0,0,0,.08);">
+            <span style="color:#fff;font-weight:900;font-size:18px;letter-spacing:-0.5px;">₮</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="font-bold">Pay with USDT</span>
+              <span class="text-[10px] text-gray-500">(Tether · KAP-20)</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold" style="background:#0A0F14;color:#00E599;">KUB Chain</span>
+            </div>
+            <div class="text-[11px] text-gray-600 mt-0.5">ชำระด้วย USDT บน Bitkub Chain · เลือก wallet ของคุณ — KUB Wallet หรือ MetaMask</div>
+            <div class="text-[10px] mt-1" style="color:#0a8050;font-weight:700;">⭐ ใช้ KUB Wallet รับส่วนลด 3% · MetaMask รองรับ self-custody</div>
+            <!-- Wallet icons strip -->
+            <div class="flex items-center gap-2 mt-2">
+              <div class="flex items-center gap-1 text-[10px] text-gray-500">
+                <span>รองรับ:</span>
+              </div>
+              <div class="kub-logo w-5 h-5" style="border-radius:4px;"></div>
+              <span class="text-[10px] font-semibold text-gray-700">KUB Wallet</span>
+              <span class="text-gray-300">·</span>
+              <span style="font-size:16px;">🦊</span>
+              <span class="text-[10px] font-semibold text-gray-700">MetaMask</span>
+            </div>
+          </div>
+          <div class="text-gray-400 text-xl">›</div>
+        </div>
+      </div>
+
+      <!-- TH Currency -->
+      <div class="text-xs font-bold text-gray-600 mb-2 pt-1">TH Currency</div>
+
+      <div class="pay-row">
+        <div class="radio"></div>
+        <div class="flex-1">
+          <span class="text-sm">QR Payment</span>
+        </div>
+        <div style="background:#1E88E5;color:#fff;" class="px-3 py-1.5 rounded text-xs font-bold">
+          <span style="color:#F2A33A;">PLAYPARK</span> QR<br/><span class="text-[10px] opacity-80 -mt-0.5 inline-block">PAYMENT</span>
+        </div>
+      </div>
+
+      <div class="pay-row">
+        <div class="radio"></div>
+        <div class="flex-1"><span class="text-sm">K Plus Mobile</span></div>
+        <div class="flex items-center gap-1">
+          <span style="background:#138F2D;color:#fff;" class="px-2 py-1 rounded text-[10px] font-bold">K PLUS</span>
+          <span style="background:#138F2D;color:#fff;" class="w-6 h-6 rounded grid place-items-center text-xs font-bold">K+</span>
+        </div>
+      </div>
+
+      <div class="pay-row">
+        <div class="radio"></div>
+        <div class="flex-1"><span class="text-sm">SCB Easy App</span></div>
+        <div style="background:#4B2A82;color:#fff;" class="px-2 py-1 rounded text-[10px] font-bold flex items-center gap-1">
+          <span>🏛️</span> SCB EASY
+        </div>
+      </div>
+
+      <div class="pay-row">
+        <div class="radio"></div>
+        <div class="flex-1"><span class="text-sm">Debit Card/Credit Card</span></div>
+        <div class="flex items-center gap-1">
+          <span style="background:#EB001B;color:#fff;" class="text-[9px] font-bold px-1.5 py-0.5 rounded">MC</span>
+          <span style="background:#1A1F71;color:#fff;" class="text-[9px] font-bold px-1.5 py-0.5 rounded">VISA</span>
+        </div>
+      </div>
+
+      <div class="pay-row">
+        <div class="radio"></div>
+        <div class="flex-1"><span class="text-sm">Paotang</span></div>
+        <span style="background:#FFD600;color:#0a0a0a;" class="px-2 py-1 rounded text-[10px] font-bold">เป๋าตัง</span>
+      </div>
+
+      <div class="pay-row">
+        <div class="radio"></div>
+        <div class="flex-1"><span class="text-sm">ShopeePay</span></div>
+        <span style="background:#EE4D2D;color:#fff;" class="px-2 py-1 rounded text-[10px] font-bold">ShopeePay</span>
+      </div>
+
+      <div class="pay-row">
+        <div class="radio"></div>
+        <div class="flex-1"><span class="text-sm">LINEPay</span></div>
+        <span style="background:#FF3E5C;color:#fff;" class="px-2 py-1 rounded text-[10px] font-bold flex items-center gap-1">rabbit <span style="background:#06C755;" class="px-1 rounded">LINE Pay</span></span>
+      </div>
+
+      <div class="pay-row">
+        <div class="radio"></div>
+        <div class="flex-1"><span class="text-sm">TrueMoney Wallet</span></div>
+        <span style="background:#FF6600;color:#fff;" class="px-2 py-1 rounded text-[10px] font-bold">truemoney</span>
+      </div>
+
+      <div class="pay-row">
+        <div class="radio"></div>
+        <div class="flex-1"><span class="text-sm">@CASH THAILAND</span></div>
+        <span style="background:#E91E2D;color:#fff;" class="px-2 py-1 rounded text-[10px] font-bold">@CASH™</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================ -->
+<!-- MODAL: USDT WALLET PICKER -->
+<!-- ============================ -->
+<div id="usdt-wallet-picker-modal" class="modal-bg" onclick="closeAllModals(event)">
+  <div class="modal fade-in" onclick="event.stopPropagation()" style="max-width:480px;">
+    <div class="modal-header" style="background:linear-gradient(135deg,#26A17B,#1E8765);">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 grid place-items-center" style="background:#fff;border-radius:50%;">
+          <span style="color:#26A17B;font-weight:900;font-size:18px;letter-spacing:-0.5px;">₮</span>
+        </div>
+        <div>
+          <div class="font-bold">Pay with USDT</div>
+          <div class="text-xs opacity-90 mt-0.5">เลือก wallet ที่ใช้ชำระเงิน</div>
+        </div>
+      </div>
+      <span class="modal-close" onclick="closeAllModals()">✕</span>
+    </div>
+    <div class="modal-body">
+      <div class="text-center py-2 mb-3">
+        <div class="text-sm text-gray-600">
+          ยอดที่จะชำระ: <span class="font-bold text-gray-900" id="usdt-picker-thb">100.00</span> THB
+          <span class="text-gray-400 mx-1">·</span>
+          ≈ <span class="font-bold" style="color:#26A17B;" id="usdt-picker-usdt">2.740</span> USDT
+        </div>
+        <div class="text-[11px] text-gray-500 mt-1">บน Bitkub Chain (KAP-20) · อัตรา 1 USDT ≈ 36.50 THB</div>
+      </div>
+
+      <!-- KUB Wallet card -->
+      <div onclick="pickKubWallet()" class="cursor-pointer rounded-lg p-4 mb-3 border-2 transition" style="border-color:#00E599;background:linear-gradient(135deg,rgba(0,229,153,.08),rgba(0,229,153,0));">
+        <div class="flex items-center gap-3">
+          <div class="kub-logo w-14 h-14 flex-shrink-0" style="border-radius:10px;box-shadow:0 2px 6px rgba(0,176,93,.18);"></div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="font-bold text-base">KUB Wallet</span>
+              <span class="text-[10px] text-gray-500">(Bitkub NEXT)</span>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold" style="background:#0a8050;color:#fff;">⭐ -3%</span>
+            </div>
+            <div class="text-[11px] text-gray-600 mt-1">บัญชี Bitkub เดิม · ไม่มี gas fee · จ่ายด้วย QR ใน app · 1M+ users</div>
+            <div class="text-[10px] mt-1.5 font-semibold" style="color:#0a8050;">⚡ Quick · Gas sponsored by Bitkub</div>
+          </div>
+          <div class="text-2xl" style="color:#00E599;">›</div>
+        </div>
+      </div>
+
+      <!-- Metamask card -->
+      <div onclick="pickMetamask()" class="cursor-pointer rounded-lg p-4 border-2 transition" style="border-color:#F6851B;background:linear-gradient(135deg,rgba(246,133,27,.06),rgba(246,133,27,0));">
+        <div class="flex items-center gap-3">
+          <div class="w-14 h-14 flex-shrink-0 grid place-items-center" style="border-radius:10px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.08);font-size:32px;">🦊</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="font-bold text-base">MetaMask</span>
+              <span class="text-[10px] text-gray-500">(Browser Extension)</span>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold" style="background:#6f4500;color:#fff;">Self-custody</span>
+            </div>
+            <div class="text-[11px] text-gray-600 mt-1">เชื่อม Web3 wallet ของคุณ · รองรับ KUB Chain · กรอก private key เอง</div>
+            <div class="text-[10px] mt-1.5 font-semibold" style="color:#6f4500;">🦊 สำหรับ user ที่มี wallet อยู่แล้ว · gas ~0.0001 KUB</div>
+          </div>
+          <div class="text-2xl" style="color:#F6851B;">›</div>
+        </div>
+      </div>
+
+      <div class="text-[10px] text-gray-500 text-center mt-3">
+        🔐 ไม่ว่าจะเลือก wallet ไหน USDT ที่ชำระจะส่งไปยัง PlayMall Merchant บน Bitkub Chain
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ -->
+<!-- MODAL: KUB LOGIN REQUIRED -->
+<!-- ============================ -->
+<div id="kub-login-modal" class="modal-bg" onclick="closeAllModals(event)">
+  <div class="modal fade-in" onclick="event.stopPropagation()" style="max-width:480px;">
+    <div class="modal-header" style="background:#0A0F14;">
+      <div class="flex items-center gap-2.5">
+        <div class="kub-logo w-8 h-8" style="border-radius:6px;"></div>
+        <div>
+          <div class="font-bold">KUB Wallet</div>
+          <div class="text-xs opacity-80 mt-0.5">เข้าสู่ระบบเพื่อใช้งาน</div>
+        </div>
+      </div>
+      <span class="modal-close" onclick="closeAllModals()">✕</span>
+    </div>
+    <div class="modal-body">
+      <div class="text-center py-3">
+        <div class="kub-logo w-24 h-24 mx-auto mb-3" style="box-shadow:0 4px 16px rgba(0,176,93,.18);border-radius:18px;"></div>
+        <h3 class="font-bold text-lg">เข้าสู่ระบบ KUB Wallet</h3>
+        <p class="text-sm text-gray-600 mt-2">กระเป๋าดิจิทัลบน Bitkub Chain · 1M+ users<br/>เพื่อชำระเงินด้วย <strong>USDT</strong> (Tether บน KUB Chain)</p>
+      </div>
+
+      <!-- Trusted by partners -->
+      <div class="bg-gradient-to-br from-gray-50 to-green-50 border border-green-100 rounded-lg p-3 mt-3">
+        <div class="text-[10px] uppercase tracking-wider font-bold text-gray-500 mb-2 text-center">🤝 Trusted by leading Thai brands</div>
+        <div class="grid grid-cols-3 gap-1.5 text-[10px]">
+          <div class="bg-white border border-gray-200 rounded p-1.5 text-center font-bold text-gray-700">🎮 TSX Astronize</div>
+          <div class="bg-white border border-gray-200 rounded p-1.5 text-center font-bold text-gray-700">🌙 Morning Moon</div>
+          <div class="bg-white border border-gray-200 rounded p-1.5 text-center font-bold text-gray-700">🖼️ Bitkub NFT</div>
+          <div class="bg-white border border-gray-200 rounded p-1.5 text-center font-bold text-gray-700">🛒 Villa Market</div>
+          <div class="bg-white border border-gray-200 rounded p-1.5 text-center font-bold text-gray-700">📱 Jaymart</div>
+          <div class="bg-white border border-gray-200 rounded p-1.5 text-center font-bold text-gray-700">☕ Casa Lapin</div>
+        </div>
+      </div>
+
+      <!-- Why KUB Wallet -->
+      <div class="bg-gray-50 rounded-lg p-4 mt-3">
+        <div class="text-xs font-bold text-gray-700 mb-2">💡 ทำไมต้องใช้ KUB Wallet?</div>
+        <ul class="text-xs text-gray-600 space-y-1.5">
+          <li class="flex items-start gap-2"><span class="text-[#00E599] font-bold">✓</span><span>ส่วนลดพิเศษ 3% เมื่อชำระด้วย USDT</span></li>
+          <li class="flex items-start gap-2"><span class="text-[#00E599] font-bold">✓</span><span>ไม่มี gas fee · Platform จ่ายให้ (sponsored)</span></li>
+          <li class="flex items-start gap-2"><span class="text-[#00E599] font-bold">✓</span><span>ใช้บัญชี Bitkub Exchange ที่มีอยู่ login ได้เลย</span></li>
+          <li class="flex items-start gap-2"><span class="text-[#00E599] font-bold">✓</span><span>ทำงานกับ dApp ทั่ว KUB ecosystem (NFT, Metaverse, dApps อื่น)</span></li>
+        </ul>
+      </div>
+
+      <!-- Kubplay JV insider note -->
+      <div class="border border-amber-200 rounded-lg p-2.5 mt-3" style="background:linear-gradient(90deg,#FFF7E8,#FFE9C2);">
+        <div class="text-[11px] text-amber-900 flex items-start gap-2">
+          <span class="text-base">💼</span>
+          <span><strong>Insider note:</strong> Asphere Innovations (parent ของ Playpark) ร่วมกับ Bitkub Capital ตั้ง <strong>Kubplay Entertainment</strong> แล้วเปิด <strong>TSX by Astronize</strong> (Apr 2024) — KUB Wallet พิสูจน์แล้วใน Playpark ecosystem</span>
+        </div>
+      </div>
+
+      <div class="space-y-2 mt-5">
+        <button onclick="loginKubWallet()" class="btn-kub w-full py-3">🔐 เข้าสู่ระบบด้วยบัญชี Bitkub</button>
+        <button onclick="loginKubWallet()" class="w-full py-3 rounded-md border-2 font-semibold text-sm hover:bg-gray-50" style="border-color:#00E599;color:#0a8050;">📝 สมัครสมาชิก KUB Wallet (ฟรี)</button>
+      </div>
+      <p class="text-[11px] text-gray-500 text-center mt-3">Powered by <strong style="color:#00E599;">Bitkub NEXT</strong> · ผลิตภัณฑ์โดย Bitkub Blockchain Technology</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ -->
+<!-- MODAL: KUB CONFIRM PAYMENT -->
+<!-- ============================ -->
+<div id="kub-confirm-modal" class="modal-bg" onclick="closeAllModals(event)">
+  <div class="modal fade-in" onclick="event.stopPropagation()" style="max-width:520px;">
+    <div class="modal-header" style="background:#0A0F14;">
+      <div class="flex items-center gap-2.5">
+        <div class="kub-logo w-8 h-8" style="border-radius:6px;"></div>
+        <div>
+          <div class="font-bold">ยืนยันการชำระเงิน</div>
+          <div class="text-xs opacity-80 mt-0.5">KUB Wallet · USDT (KAP-20)</div>
+        </div>
+      </div>
+      <span class="modal-close" onclick="closeAllModals()">✕</span>
+    </div>
+    <div class="modal-body">
+
+      <!-- Network selector — top of confirm screen -->
+      <div class="flex items-center justify-between mb-3 p-2.5 rounded-lg" style="background:#f9fafb;border:1px solid #e5e7eb;">
+        <div class="text-[11px] text-gray-600 font-semibold">⛓️ ส่ง USDT ผ่าน Network</div>
+        <div class="chain-dd-wrap">
+          <button class="chain-dd-btn" onclick="event.stopPropagation();toggleChainDropdown('kub')">
+            <span class="chain-dd-dot js-net-dot" style="background:#00E599;"></span>
+            <span class="js-net-mainnet">KUB Chain Mainnet</span>
+            <span class="chev">▼</span>
+          </button>
+          <div id="chain-dd-menu-kub" class="chain-dd-menu">
+            <div class="chain-dd-item" onclick="event.stopPropagation();setChain('kub','kub')">
+              <span class="chain-dd-dot" style="background:#00E599;"></span>
+              <div style="flex:1;"><div class="name">KUB Chain</div><div class="sub">KAP-20 · gas ~฿0.18 ⭐</div></div>
+            </div>
+            <div class="chain-dd-item" onclick="event.stopPropagation();setChain('eth','kub')">
+              <span class="chain-dd-dot" style="background:#627EEA;"></span>
+              <div style="flex:1;"><div class="name">Ethereum</div><div class="sub">ERC-20 · gas ~฿120</div></div>
+            </div>
+            <div class="chain-dd-item" onclick="event.stopPropagation();setChain('bsc','kub')">
+              <span class="chain-dd-dot" style="background:#F0B90B;"></span>
+              <div style="flex:1;"><div class="name">BSC</div><div class="sub">BEP-20 · gas ~฿3.50</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order summary -->
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="text-xs uppercase tracking-wider font-bold text-gray-500 mb-2">รายการเติมเงิน</div>
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-lg flex items-center justify-center text-2xl font-bold text-white" style="background:linear-gradient(135deg,#9B59B6,#E91E63);">💃</div>
+          <div class="flex-1">
+            <div class="font-semibold" id="confirm-game-name">Audition</div>
+            <div class="text-xs text-gray-500">PlayMall · TH Point top-up</div>
+          </div>
+          <div class="text-right">
+            <div class="font-bold text-lg" id="confirm-th-point">100.00</div>
+            <div class="text-xs text-gray-500">TH Point</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conversion -->
+      <div class="mt-4 rounded-lg overflow-hidden" style="background:linear-gradient(135deg,#0A0F14,#1a2530);">
+        <div class="p-5 text-white">
+          <div class="flex items-center justify-between text-xs opacity-80 mb-2">
+            <span>ยอดที่ต้องชำระ</span>
+            <span>💱 Live rate: 1 USDT ≈ 36.50 บาท</span>
+          </div>
+          <div class="flex items-baseline gap-3">
+            <div class="text-2xl font-bold opacity-60 line-through">฿<span id="confirm-thb">100.00</span></div>
+            <div class="text-xs opacity-50">→</div>
+            <div class="flex items-baseline gap-1.5">
+              <div class="kub-logo-dark inline-block" style="width:28px;height:28px;transform:translateY(4px);"></div>
+              <span class="text-4xl font-extrabold" style="color:#00E599;"><span id="confirm-usdt">2.740</span></span>
+              <span class="text-base font-bold" style="color:#00E599;">USDT</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 mt-3 text-xs">
+            <span class="opacity-60">ส่วนลด USDT 3%:</span>
+            <span style="color:#00E599;font-weight:700;" id="confirm-discount">-0.082 USDT</span>
+            <span class="opacity-60">→</span>
+            <span style="color:#00E599;font-weight:700;">รวม: <span id="confirm-total">2.658</span> USDT</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wallet info -->
+      <div class="mt-4 bg-gray-50 rounded-lg p-4">
+        <div class="flex items-center justify-between text-xs">
+          <div>
+            <div class="text-gray-500 font-medium uppercase tracking-wider">From Wallet</div>
+            <div class="font-mono font-semibold mt-1">0xAb12C9d8…0123456</div>
+            <div class="text-[10px] text-gray-500 mt-0.5">Bitkub Chain (KUB) · KUB Wallet</div>
+          </div>
+          <div class="text-right">
+            <div class="text-gray-500 font-medium uppercase tracking-wider">Balance</div>
+            <div class="font-mono font-bold mt-1">120.500 USDT</div>
+            <div class="text-[10px] mt-0.5" style="color:#0a8050;font-weight:700;">เพียงพอ ✓</div>
+          </div>
+        </div>
+        <div class="flex justify-between mt-3 pt-3 border-t border-gray-200 text-xs">
+          <span class="text-gray-500">หลังชำระ</span>
+          <span class="font-mono font-bold" style="color:#0a8050;" id="confirm-after">117.842 USDT</span>
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="flex gap-2 mt-5">
+        <button onclick="closeAllModals()" class="flex-1 py-3 rounded-md border border-gray-300 font-semibold text-sm hover:bg-gray-50">ยกเลิก</button>
+        <button onclick="proceedToQR()" class="flex-[2] btn-kub py-3">📱 แสดง QR Code</button>
+      </div>
+      <p class="text-[11px] text-gray-500 text-center mt-3">📲 สแกน QR จาก <strong>KUB Wallet</strong> · ธุรกรรม verify on-chain · ตรวจสอบบน <a class="text-[#00E599] hover:underline cursor-pointer">KUBScan</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ -->
+<!-- MODAL: KUB QR PAYMENT -->
+<!-- ============================ -->
+<div id="kub-qr-modal" class="modal-bg" onclick="closeAllModals(event)">
+  <div class="modal fade-in" onclick="event.stopPropagation()" style="max-width:560px;">
+    <div class="modal-header" style="background:#0A0F14;">
+      <div class="flex items-center gap-2.5">
+        <div class="kub-logo w-8 h-8" style="border-radius:6px;"></div>
+        <div>
+          <div class="font-bold">สแกน QR ชำระเงิน</div>
+          <div class="text-xs opacity-80 mt-0.5">KUB Wallet · USDT (KAP-20)</div>
+        </div>
+      </div>
+      <span class="modal-close" onclick="closeAllModals()">✕</span>
+    </div>
+    <div class="modal-body">
+
+      <!-- Countdown timer -->
+      <div class="text-center mb-4">
+        <div id="qr-timer-box" class="inline-flex items-center gap-2 px-4 py-2 rounded-full" style="background:#FEF3C7;border:1px solid #FBBF24;">
+          <span class="text-base">⏱️</span>
+          <span class="text-sm text-amber-900">เหลือเวลาทำธุรกรรม <strong class="font-mono font-bold text-lg" id="qr-countdown">15:00</strong></span>
+        </div>
+      </div>
+
+      <!-- QR Code -->
+      <div class="flex justify-center">
+        <div class="bg-white p-4 rounded-2xl border-2 border-gray-200" style="box-shadow:0 8px 24px rgba(0,176,93,.08);">
+          <!-- QR header -->
+          <div style="background:#0A0F14;border-radius:8px 8px 0 0;" class="text-[11px] font-bold py-1.5 px-3 -m-4 mb-3 flex items-center justify-center gap-1.5">
+            <div class="kub-logo-dark inline-block" style="width:14px;height:14px;"></div>
+            <span style="color:#00E599;">KUB Wallet · USDT QR</span>
+          </div>
+          <!-- Wrapper for SVG + center logo overlay (relative positioning) -->
+          <div style="position:relative;display:inline-block;line-height:0;">
+          <!-- QR SVG (recreated KAP-20 USDT QR pattern) -->
+          <svg viewBox="0 0 33 33" width="240" height="240" shape-rendering="crispEdges">
+            <rect width="33" height="33" fill="#fff"/>
+            <!-- Corner finder pattern (top-left) -->
+            <rect x="0" y="0" width="7" height="7" fill="#000"/>
+            <rect x="1" y="1" width="5" height="5" fill="#fff"/>
+            <rect x="2" y="2" width="3" height="3" fill="#000"/>
+            <!-- Corner finder pattern (top-right) -->
+            <rect x="26" y="0" width="7" height="7" fill="#000"/>
+            <rect x="27" y="1" width="5" height="5" fill="#fff"/>
+            <rect x="28" y="2" width="3" height="3" fill="#000"/>
+            <!-- Corner finder pattern (bottom-left) -->
+            <rect x="0" y="26" width="7" height="7" fill="#000"/>
+            <rect x="1" y="27" width="5" height="5" fill="#fff"/>
+            <rect x="2" y="28" width="3" height="3" fill="#000"/>
+            <!-- Alignment pattern (bottom-right area) -->
+            <rect x="20" y="20" width="5" height="5" fill="#000"/>
+            <rect x="21" y="21" width="3" height="3" fill="#fff"/>
+            <rect x="22" y="22" width="1" height="1" fill="#000"/>
+            <!-- Timing patterns -->
+            <rect x="8" y="6" width="1" height="1" fill="#000"/><rect x="10" y="6" width="1" height="1" fill="#000"/><rect x="12" y="6" width="1" height="1" fill="#000"/><rect x="14" y="6" width="1" height="1" fill="#000"/><rect x="16" y="6" width="1" height="1" fill="#000"/><rect x="18" y="6" width="1" height="1" fill="#000"/><rect x="20" y="6" width="1" height="1" fill="#000"/><rect x="22" y="6" width="1" height="1" fill="#000"/><rect x="24" y="6" width="1" height="1" fill="#000"/>
+            <rect x="6" y="8" width="1" height="1" fill="#000"/><rect x="6" y="10" width="1" height="1" fill="#000"/><rect x="6" y="12" width="1" height="1" fill="#000"/><rect x="6" y="14" width="1" height="1" fill="#000"/><rect x="6" y="16" width="1" height="1" fill="#000"/><rect x="6" y="18" width="1" height="1" fill="#000"/><rect x="6" y="20" width="1" height="1" fill="#000"/><rect x="6" y="22" width="1" height="1" fill="#000"/><rect x="6" y="24" width="1" height="1" fill="#000"/>
+            <!-- Data modules — random scatter -->
+            <rect x="9" y="0" width="1" height="1" fill="#000"/><rect x="11" y="1" width="1" height="1" fill="#000"/><rect x="13" y="2" width="1" height="1" fill="#000"/><rect x="15" y="0" width="1" height="1" fill="#000"/><rect x="17" y="3" width="1" height="1" fill="#000"/><rect x="19" y="0" width="1" height="1" fill="#000"/><rect x="21" y="2" width="1" height="1" fill="#000"/><rect x="23" y="4" width="1" height="1" fill="#000"/>
+            <rect x="8" y="3" width="1" height="1" fill="#000"/><rect x="10" y="4" width="1" height="1" fill="#000"/><rect x="12" y="0" width="1" height="1" fill="#000"/><rect x="14" y="2" width="1" height="1" fill="#000"/><rect x="16" y="5" width="1" height="1" fill="#000"/><rect x="18" y="2" width="1" height="1" fill="#000"/><rect x="20" y="4" width="1" height="1" fill="#000"/><rect x="22" y="5" width="1" height="1" fill="#000"/><rect x="24" y="0" width="1" height="1" fill="#000"/>
+            <rect x="0" y="9" width="1" height="1" fill="#000"/><rect x="2" y="10" width="1" height="1" fill="#000"/><rect x="4" y="11" width="1" height="1" fill="#000"/><rect x="1" y="13" width="1" height="1" fill="#000"/><rect x="3" y="14" width="1" height="1" fill="#000"/><rect x="0" y="16" width="1" height="1" fill="#000"/><rect x="2" y="17" width="1" height="1" fill="#000"/><rect x="4" y="18" width="1" height="1" fill="#000"/><rect x="0" y="20" width="1" height="1" fill="#000"/><rect x="3" y="22" width="1" height="1" fill="#000"/><rect x="1" y="24" width="1" height="1" fill="#000"/>
+            <rect x="8" y="8" width="1" height="1" fill="#000"/><rect x="10" y="9" width="1" height="1" fill="#000"/><rect x="12" y="10" width="1" height="1" fill="#000"/><rect x="14" y="11" width="1" height="1" fill="#000"/><rect x="16" y="9" width="1" height="1" fill="#000"/><rect x="18" y="11" width="1" height="1" fill="#000"/><rect x="20" y="9" width="1" height="1" fill="#000"/><rect x="22" y="10" width="1" height="1" fill="#000"/><rect x="24" y="11" width="1" height="1" fill="#000"/>
+            <rect x="9" y="12" width="1" height="1" fill="#000"/><rect x="11" y="13" width="1" height="1" fill="#000"/><rect x="13" y="14" width="1" height="1" fill="#000"/><rect x="15" y="12" width="1" height="1" fill="#000"/><rect x="17" y="14" width="1" height="1" fill="#000"/><rect x="19" y="13" width="1" height="1" fill="#000"/><rect x="21" y="14" width="1" height="1" fill="#000"/><rect x="23" y="12" width="1" height="1" fill="#000"/>
+            <rect x="8" y="15" width="1" height="1" fill="#000"/><rect x="10" y="16" width="1" height="1" fill="#000"/><rect x="12" y="17" width="1" height="1" fill="#000"/><rect x="14" y="15" width="1" height="1" fill="#000"/><rect x="16" y="17" width="1" height="1" fill="#000"/><rect x="18" y="16" width="1" height="1" fill="#000"/><rect x="20" y="17" width="1" height="1" fill="#000"/><rect x="22" y="15" width="1" height="1" fill="#000"/><rect x="24" y="16" width="1" height="1" fill="#000"/>
+            <rect x="9" y="18" width="1" height="1" fill="#000"/><rect x="11" y="19" width="1" height="1" fill="#000"/><rect x="13" y="20" width="1" height="1" fill="#000"/><rect x="15" y="18" width="1" height="1" fill="#000"/><rect x="17" y="19" width="1" height="1" fill="#000"/><rect x="19" y="20" width="1" height="1" fill="#000"/>
+            <rect x="8" y="22" width="1" height="1" fill="#000"/><rect x="10" y="24" width="1" height="1" fill="#000"/><rect x="12" y="23" width="1" height="1" fill="#000"/><rect x="14" y="22" width="1" height="1" fill="#000"/><rect x="16" y="24" width="1" height="1" fill="#000"/><rect x="18" y="23" width="1" height="1" fill="#000"/>
+            <rect x="9" y="26" width="1" height="1" fill="#000"/><rect x="11" y="27" width="1" height="1" fill="#000"/><rect x="13" y="29" width="1" height="1" fill="#000"/><rect x="15" y="26" width="1" height="1" fill="#000"/><rect x="17" y="28" width="1" height="1" fill="#000"/><rect x="19" y="30" width="1" height="1" fill="#000"/><rect x="21" y="27" width="1" height="1" fill="#000"/><rect x="23" y="29" width="1" height="1" fill="#000"/>
+            <rect x="8" y="32" width="1" height="1" fill="#000"/><rect x="10" y="32" width="1" height="1" fill="#000"/><rect x="12" y="32" width="1" height="1" fill="#000"/><rect x="14" y="32" width="1" height="1" fill="#000"/><rect x="16" y="32" width="1" height="1" fill="#000"/><rect x="18" y="32" width="1" height="1" fill="#000"/><rect x="26" y="9" width="1" height="1" fill="#000"/><rect x="28" y="11" width="1" height="1" fill="#000"/><rect x="30" y="13" width="1" height="1" fill="#000"/><rect x="32" y="9" width="1" height="1" fill="#000"/><rect x="26" y="14" width="1" height="1" fill="#000"/><rect x="28" y="17" width="1" height="1" fill="#000"/><rect x="30" y="19" width="1" height="1" fill="#000"/><rect x="32" y="22" width="1" height="1" fill="#000"/>
+            <rect x="26" y="32" width="1" height="1" fill="#000"/><rect x="28" y="29" width="1" height="1" fill="#000"/><rect x="30" y="32" width="1" height="1" fill="#000"/><rect x="32" y="28" width="1" height="1" fill="#000"/><rect x="32" y="30" width="1" height="1" fill="#000"/>
+          </svg>
+          <!-- Center KUB logo overlay (positioned over QR center, hides ~6% of QR — within error-correction tolerance) -->
+          <div class="kub-logo" style="position:absolute;width:48px;height:48px;border-radius:8px;left:50%;top:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 5px white, 0 2px 6px rgba(0,0,0,.12);"></div>
+          </div><!-- /relative wrapper -->
+        </div>
+      </div>
+
+      <p class="text-center text-sm text-gray-600 mt-4">
+        📱 สแกน QR ด้วยแอป <strong style="color:#0a8050;">KUB Wallet</strong> เพื่อโอน
+      </p>
+      <p class="text-center text-2xl font-extrabold mt-1" style="color:#00E599;"><span id="qr-amount">2.658</span> <span class="text-base">USDT</span></p>
+
+      <!-- Order details -->
+      <div class="bg-gray-50 rounded-lg p-4 mt-4 space-y-2 text-sm">
+        <div class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">📋 รายละเอียดธุรกรรม</div>
+        <div class="flex justify-between items-start">
+          <span class="text-gray-500 shrink-0">ร้านค้า</span>
+          <span class="font-semibold text-right ml-2">บริษัท Playpark Company Limited</span>
+        </div>
+        <div class="flex justify-between items-start">
+          <span class="text-gray-500 shrink-0">สินค้า</span>
+          <span class="font-semibold text-right ml-2" id="qr-item">Audition · 100 TH Point</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-500">จำนวน</span>
+          <span class="font-medium">1 รายการ</span>
+        </div>
+        <div class="flex justify-between border-t border-gray-200 pt-2 mt-2">
+          <span class="text-gray-500">ยอดชำระ</span>
+          <span class="font-bold font-mono" style="color:#0a8050;" id="qr-total">2.658 USDT</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-500">≈ ในรูป THB</span>
+          <span class="font-mono" id="qr-thb">฿97.00</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-500">Network</span>
+          <span class="text-xs"><span class="js-net-long">Bitkub Chain (KUB)</span> · <span class="js-net-token">KAP-20</span></span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-500">Order ID</span>
+          <span class="font-mono text-xs text-blue-600" id="qr-order">PM-ORD-845721</span>
+        </div>
+      </div>
+
+      <!-- Warning -->
+      <div class="bg-orange-50 border border-orange-200 rounded-lg p-3 mt-3 text-[11px] text-orange-800 space-y-1">
+        <div class="flex items-start gap-1.5"><span>⚠️</span><span>ตรวจสอบยอดและรายละเอียดให้ถูกต้องก่อนยืนยันใน KUB Wallet</span></div>
+        <div class="flex items-start gap-1.5"><span>💎</span><span>ส่งเฉพาะ <strong>USDT บน Bitkub Chain (KAP-20)</strong> เท่านั้น</span></div>
+        <div class="flex items-start gap-1.5"><span>⏱️</span><span>QR หมดอายุหลัง 15:00 นาที — ระบบ refund อัตโนมัติถ้าโอนเกินเวลา</span></div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="flex gap-2 mt-5">
+        <button onclick="closeAllModals()" class="flex-1 py-3 rounded-md border border-gray-300 font-semibold text-sm hover:bg-gray-50">ยกเลิก</button>
+        <button onclick="confirmQRPayment()" class="flex-[2] btn-kub py-3">✓ ฉันสแกนและชำระแล้ว</button>
+      </div>
+      <p class="text-[11px] text-gray-500 text-center mt-3">⏱️ ระบบจะ verify on-chain · TH Point เพิ่มทันทีเมื่อ payment confirmed</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ -->
+<!-- MODAL: KUB SUCCESS -->
+<!-- ============================ -->
+<div id="kub-success-modal" class="modal-bg" onclick="closeAllModals(event)">
+  <div class="modal fade-in" onclick="event.stopPropagation()" style="max-width:480px;">
+    <div class="modal-header" style="background:linear-gradient(90deg,#00E599,#00B377);color:#0A0F14;">
+      <div class="flex items-center gap-2">
+        <span class="text-xl">✓</span>
+        <div>
+          <div class="font-bold">ชำระเงินสำเร็จ!</div>
+          <div class="text-xs opacity-80 mt-0.5">TH Point เพิ่มเข้าบัญชีแล้ว</div>
+        </div>
+      </div>
+      <span class="modal-close" onclick="closeAllModals()" style="color:#0A0F14;">✕</span>
+    </div>
+    <div class="modal-body text-center">
+      <div class="w-20 h-20 rounded-full mx-auto flex items-center justify-center text-5xl mb-3" style="background:rgba(0,229,153,.12);color:#00B377;">✓</div>
+      <h3 class="font-bold text-xl">ธุรกรรมสำเร็จ</h3>
+      <p class="text-sm text-gray-600 mt-2">TH Point ของคุณเพิ่มขึ้นแล้ว · พร้อมใช้ในเกมทันที</p>
+
+      <div class="bg-gray-50 rounded-lg p-4 mt-5 text-left space-y-2 text-sm">
+        <div class="flex justify-between"><span class="text-gray-500">เกม</span><span class="font-semibold" id="success-game">Audition</span></div>
+        <div class="flex justify-between"><span class="text-gray-500">TH Point เพิ่ม</span><span class="font-bold" style="color:#0a8050;" id="success-points">+100.00</span></div>
+        <div class="flex justify-between"><span class="text-gray-500">ชำระด้วย</span><span class="font-mono font-bold" id="success-paid">2.658 USDT</span></div>
+        <div class="flex justify-between"><span class="text-gray-500">≈ ในรูป THB</span><span class="font-mono" id="success-thb">฿97.00</span></div>
+        <div class="flex justify-between"><span class="text-gray-500">ส่วนลด USDT</span><span style="color:#dc2626;" class="font-mono">-3% (-0.082 USDT)</span></div>
+        <div class="flex justify-between border-t border-gray-200 pt-2 mt-1"><span class="text-gray-500">Tx Hash</span><span class="font-mono text-xs text-blue-600 cursor-pointer hover:underline" id="success-tx">0xa9f3…c2d8 ↗</span></div>
+        <div class="flex justify-between"><span class="text-gray-500">Network</span><span class="text-xs js-net-long">Bitkub Chain (KUB)</span></div>
+        <div class="flex justify-between"><span class="text-gray-500">Order ID</span><span class="font-mono text-xs" id="success-order">PM-ORD-845721</span></div>
+      </div>
+
+      <button onclick="completePurchase()" class="btn-orange w-full py-3 mt-5">เริ่มเล่นเกม</button>
+      <p class="text-[11px] text-gray-500 mt-3">📨 Receipt ส่ง email · เก็บ on-chain · Verify บน <a class="text-[#00E599] font-semibold cursor-pointer hover:underline">KUBScan ↗</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ -->
+<!-- METAMASK CONNECT POPUP (simulated extension UI) -->
+<!-- ============================ -->
+<div id="metamask-connect-modal" class="modal-bg" onclick="closeAllModals(event)">
+  <div class="modal fade-in" onclick="event.stopPropagation()" style="max-width:360px;border-radius:14px;overflow:hidden;border:1px solid #d1d5db;">
+    <div style="background:#f3f4f6;padding:6px 10px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:6px;">
+      <div style="display:flex;gap:4px;">
+        <span style="width:10px;height:10px;border-radius:50%;background:#ef4444;display:inline-block;"></span>
+        <span style="width:10px;height:10px;border-radius:50%;background:#f59e0b;display:inline-block;"></span>
+        <span style="width:10px;height:10px;border-radius:50%;background:#10b981;display:inline-block;"></span>
+      </div>
+      <div style="flex:1;text-align:center;font-size:11px;color:#6b7280;font-weight:600;">🦊 MetaMask</div>
+      <span class="modal-close" style="position:relative;top:0;right:0;color:#6b7280;font-size:14px;cursor:pointer;" onclick="closeAllModals()">✕</span>
+    </div>
+    <div style="background:#fff;padding:14px 16px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:10px;">
+      <span style="font-size:28px;">🦊</span>
+      <div style="flex:1;">
+        <div style="font-size:14px;font-weight:700;color:#161616;">Connect with MetaMask</div>
+        <div style="font-size:11px;color:#6b7280;margin-top:2px;">playmall.playpark.com</div>
+      </div>
+      <span style="background:#10b98115;color:#059669;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;">● <span class="js-net-name">KUB Chain</span></span>
+    </div>
+    <div style="background:#fff;padding:18px 16px;">
+      <div style="text-align:center;margin-bottom:14px;">
+        <div style="width:48px;height:48px;background:#F6851B;border-radius:50%;margin:0 auto 8px;display:grid;place-items:center;font-size:24px;">🔗</div>
+        <div style="font-size:14px;font-weight:700;color:#161616;">Connect Account</div>
+        <div style="font-size:11px;color:#6b7280;margin-top:4px;">PlayMall ต้องการเชื่อมต่อกับบัญชีของคุณ</div>
+      </div>
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:10px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:24px;height:24px;background:linear-gradient(135deg,#F6851B,#E2761B);border-radius:50%;"></div>
+          <div style="flex:1;">
+            <div style="font-size:12px;font-weight:700;color:#161616;">Account 1</div>
+            <div style="font-size:10px;color:#6b7280;font-family:monospace;">0x7A3f...c2D8</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:11px;font-weight:700;color:#161616;">125.4 USDT</div>
+            <div style="font-size:9px;color:#6b7280;">KAP-20</div>
+          </div>
+        </div>
+      </div>
+      <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:10px;margin-bottom:14px;">
+        <div style="font-size:10px;color:#92400e;font-weight:700;margin-bottom:4px;">📋 PlayMall will see:</div>
+        <ul style="font-size:10px;color:#78350f;list-style:none;padding-left:0;line-height:1.6;">
+          <li>• Your account address</li>
+          <li>• Account balance</li>
+          <li>• Activity on KUB Chain</li>
+        </ul>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="closeAllModals()" style="flex:1;padding:10px;border:1px solid #d1d5db;border-radius:8px;background:#fff;font-size:13px;font-weight:600;color:#374151;cursor:pointer;">ยกเลิก</button>
+        <button onclick="metamaskConnectApprove()" style="flex:1;padding:10px;background:#F6851B;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ -->
+<!-- METAMASK CONFIRM TRANSACTION POPUP -->
+<!-- ============================ -->
+<div id="metamask-confirm-modal" class="modal-bg" onclick="closeAllModals(event)">
+  <div class="modal fade-in" onclick="event.stopPropagation()" style="max-width:360px;border-radius:14px;overflow:hidden;border:1px solid #d1d5db;">
+    <div style="background:#f3f4f6;padding:6px 10px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:6px;">
+      <div style="display:flex;gap:4px;">
+        <span style="width:10px;height:10px;border-radius:50%;background:#ef4444;display:inline-block;"></span>
+        <span style="width:10px;height:10px;border-radius:50%;background:#f59e0b;display:inline-block;"></span>
+        <span style="width:10px;height:10px;border-radius:50%;background:#10b981;display:inline-block;"></span>
+      </div>
+      <div style="flex:1;text-align:center;font-size:11px;color:#6b7280;font-weight:600;">🦊 MetaMask · Transaction Request</div>
+      <span class="modal-close" style="position:relative;top:0;right:0;color:#6b7280;font-size:14px;cursor:pointer;" onclick="closeAllModals()">✕</span>
+    </div>
+    <div style="background:#fff;padding:10px 16px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+      <!-- Chain selector dropdown -->
+      <div class="chain-dd-wrap">
+        <button class="chain-dd-btn" onclick="event.stopPropagation();toggleChainDropdown('mm')">
+          <span class="chain-dd-dot js-net-dot" style="background:#00E599;"></span>
+          <span class="js-net-mainnet">KUB Chain Mainnet</span>
+          <span class="chev">▼</span>
+        </button>
+        <div id="chain-dd-menu-mm" class="chain-dd-menu">
+          <div class="chain-dd-item" onclick="event.stopPropagation();setChain('kub','mm')">
+            <span class="chain-dd-dot" style="background:#00E599;"></span>
+            <div style="flex:1;"><div class="name">KUB Chain</div><div class="sub">KAP-20 · gas ~฿0.18</div></div>
+          </div>
+          <div class="chain-dd-item" onclick="event.stopPropagation();setChain('eth','mm')">
+            <span class="chain-dd-dot" style="background:#627EEA;"></span>
+            <div style="flex:1;"><div class="name">Ethereum</div><div class="sub">ERC-20 · gas ~฿120</div></div>
+          </div>
+          <div class="chain-dd-item" onclick="event.stopPropagation();setChain('bsc','mm')">
+            <span class="chain-dd-dot" style="background:#F0B90B;"></span>
+            <div style="flex:1;"><div class="name">BSC</div><div class="sub">BEP-20 · gas ~฿3.50</div></div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div style="width:18px;height:18px;background:linear-gradient(135deg,#F6851B,#E2761B);border-radius:50%;"></div>
+        <span style="font-size:11px;font-family:monospace;color:#374151;">0x7A3f...c2D8</span>
+      </div>
+    </div>
+    <div style="background:#fff;padding:16px;text-align:center;border-bottom:1px solid #e5e7eb;">
+      <div style="font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;font-weight:700;margin-bottom:6px;">Sending</div>
+      <div style="font-size:32px;font-weight:800;color:#161616;line-height:1;">
+        <span id="mm-amount-usdt">2.674</span>
+      </div>
+      <div style="font-size:14px;color:#6b7280;font-weight:600;margin-top:4px;">USDT</div>
+      <div style="font-size:11px;color:#9ca3af;margin-top:4px;">≈ ฿<span id="mm-amount-thb">97.61</span> · 1 USDT = 36.50 THB</div>
+    </div>
+    <div style="background:#fff;padding:12px 16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f3f4f6;">
+        <span style="font-size:11px;color:#6b7280;font-weight:600;">From</span>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div style="width:18px;height:18px;background:linear-gradient(135deg,#F6851B,#E2761B);border-radius:50%;"></div>
+          <span style="font-size:11px;font-family:monospace;color:#161616;font-weight:600;">Account 1 (0x7A3f...c2D8)</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f3f4f6;">
+        <span style="font-size:11px;color:#6b7280;font-weight:600;">To</span>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div style="width:18px;height:18px;background:linear-gradient(135deg,#1E88E5,#0D47A1);border-radius:50%;display:grid;place-items:center;font-size:9px;color:#fff;font-weight:800;">P</div>
+          <span style="font-size:11px;font-family:monospace;color:#161616;font-weight:600;">PlayMall Merchant</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f3f4f6;">
+        <span style="font-size:11px;color:#6b7280;font-weight:600;">Token</span>
+        <span style="font-size:11px;font-family:monospace;color:#161616;font-weight:600;">USDT (KAP-20)</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;">
+        <span style="font-size:11px;color:#6b7280;font-weight:600;">Estimated gas fee</span>
+        <div style="text-align:right;">
+          <div class="js-net-gas" style="font-size:11px;color:#161616;font-weight:600;">0.0001 KUB</div>
+          <div style="font-size:9px;color:#9ca3af;">≈ <span class="js-net-gas-fiat">฿0.18</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="background:#fff;padding:14px 16px;border-top:1px solid #e5e7eb;display:flex;gap:8px;">
+      <button onclick="closeAllModals()" style="flex:1;padding:11px;border:1px solid #d1d5db;border-radius:8px;background:#fff;font-size:13px;font-weight:700;color:#374151;cursor:pointer;">ปฏิเสธ</button>
+      <button onclick="metamaskConfirmTx()" style="flex:1;padding:11px;background:#F6851B;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">ยืนยัน</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ -->
+<!-- METAMASK PROCESSING POPUP -->
+<!-- ============================ -->
+<div id="metamask-processing-modal" class="modal-bg" onclick="event.stopPropagation()">
+  <div class="modal fade-in" onclick="event.stopPropagation()" style="max-width:360px;border-radius:14px;overflow:hidden;border:1px solid #d1d5db;">
+    <div style="background:#fff;padding:32px 20px;text-align:center;">
+      <div style="width:64px;height:64px;margin:0 auto 16px;border-radius:50%;border:4px solid #fef3c7;border-top-color:#F6851B;animation:spin 1s linear infinite;"></div>
+      <div style="font-size:16px;font-weight:700;color:#161616;">Confirming on KUB Chain...</div>
+      <div style="font-size:12px;color:#6b7280;margin-top:6px;">รอการยืนยัน on-chain ~3-5 วินาที</div>
+      <div style="font-size:10px;color:#9ca3af;margin-top:12px;font-family:monospace;">tx: 0x<span id="mm-tx-hash">a7f3...891c</span></div>
+    </div>
+  </div>
+</div>
+<style>
+  @keyframes spin{to{transform:rotate(360deg);}}
+  /* Chain dropdown component */
+  .chain-dd-wrap{position:relative;display:inline-block;}
+  .chain-dd-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid #d1d5db;border-radius:8px;background:#fff;cursor:pointer;font-size:11px;font-weight:600;color:#161616;transition:border-color .15s;}
+  .chain-dd-btn:hover{border-color:#9ca3af;}
+  .chain-dd-btn .chev{margin-left:4px;color:#6b7280;font-size:9px;}
+  .chain-dd-menu{display:none;position:absolute;top:calc(100% + 4px);right:0;min-width:200px;background:#fff;border:1px solid #d1d5db;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,.10);z-index:9999;padding:4px;}
+  .chain-dd-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;cursor:pointer;font-size:12px;}
+  .chain-dd-item:hover{background:#f3f4f6;}
+  .chain-dd-item .name{font-weight:700;color:#161616;}
+  .chain-dd-item .sub{font-size:10px;color:#6b7280;}
+  .chain-dd-item.active{background:#ecfdf5;}
+  .chain-dd-dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0;}
+</style>
+
+<!-- ============================ -->
+<!-- METAMASK SUCCESS POPUP -->
+<!-- ============================ -->
+<div id="metamask-success-modal" class="modal-bg" onclick="closeAllModals(event)">
+  <div class="modal fade-in" onclick="event.stopPropagation()" style="max-width:480px;">
+    <div class="modal-header" style="background:linear-gradient(135deg,#F6851B,#E2761B);">
+      <div class="flex items-center gap-2">
+        <span style="font-size:24px;">🦊</span>
+        <div>
+          <div class="font-bold">Transaction Confirmed</div>
+          <div class="text-xs opacity-90 mt-0.5">via MetaMask · KUB Chain</div>
+        </div>
+      </div>
+      <span class="modal-close" onclick="completePurchase()">✕</span>
+    </div>
+    <div class="modal-body">
+      <div class="text-center py-3">
+        <div style="width:72px;height:72px;background:#10b981;border-radius:50%;margin:0 auto 12px;display:grid;place-items:center;font-size:36px;color:#fff;">✓</div>
+        <h3 class="font-bold text-lg">เติมเงินสำเร็จ</h3>
+        <p class="text-sm text-gray-600 mt-1"><span id="mm-success-game">Audition</span> · TH Point +<span id="mm-success-points">100</span></p>
+      </div>
+      <div class="bg-gray-50 rounded-lg p-3 text-xs space-y-1.5">
+        <div class="flex justify-between"><span class="text-gray-600">Paid via</span><span class="font-bold">🦊 MetaMask</span></div>
+        <div class="flex justify-between"><span class="text-gray-600">Amount</span><span class="font-bold"><span id="mm-success-paid">2.740 USDT</span></span></div>
+        <div class="flex justify-between"><span class="text-gray-600">≈ THB</span><span><span id="mm-success-thb">฿100.00</span></span></div>
+        <div class="flex justify-between"><span class="text-gray-600">Network</span><span class="font-mono text-[10px] js-net-mainnet">KUB Chain Mainnet</span></div>
+        <div class="flex justify-between"><span class="text-gray-600">From</span><span class="font-mono text-[10px]">0x7A3f...c2D8</span></div>
+        <div class="flex justify-between"><span class="text-gray-600">Tx Hash</span><span class="font-mono text-[10px] cursor-pointer hover:underline" style="color:#F6851B;"><span id="mm-success-tx">0xa7f3...891c</span> ↗</span></div>
+        <div class="flex justify-between"><span class="text-gray-600">Order ID</span><span class="font-mono text-[10px]"><span id="mm-success-order">PM-ORD-123456</span></span></div>
+      </div>
+      <button onclick="completePurchase()" class="btn-orange w-full py-3 mt-5">เริ่มเล่นเกม</button>
+      <p class="text-[11px] text-gray-500 mt-3">📨 Receipt ส่ง email · เก็บ on-chain · Verify บน <a class="cursor-pointer hover:underline" style="color:#F6851B;font-weight:600;">KUBScan ↗</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ====== Scripts ====== -->
+<script>
+  // ===== State =====
+  let state = {
+    currentGame: 'Audition',
+    selectedPackage: 100, // default 100 TH Point
+    kubLoggedIn: false,
+    pinValue: '',
+    thPointBalance: 0,
+    selectedWallet: null,  // 'kub' | 'mm'
+    selectedChain: 'kub',  // 'kub' | 'eth' | 'bsc' — default
+  };
+
+  const RATE = 36.5; // 1 USDT ≈ 36.5 THB
+  const DISCOUNT = 0.03; // 3% USDT discount
+
+  // ===== Chain registry =====
+  const CHAINS = {
+    kub: { name: 'KUB Chain', long: 'Bitkub Chain (KUB)', mainnet: 'KUB Chain Mainnet', token: 'KAP-20', color: '#00E599', chainId: 96, gas: '0.0001 KUB', gasFiat: '฿0.18' },
+    eth: { name: 'Ethereum', long: 'Ethereum Mainnet',     mainnet: 'Ethereum Mainnet', token: 'ERC-20', color: '#627EEA', chainId: 1,  gas: '0.005 ETH',  gasFiat: '฿120.00' },
+    bsc: { name: 'BSC',      long: 'BNB Smart Chain',     mainnet: 'BSC Mainnet',     token: 'BEP-20', color: '#F0B90B', chainId: 56, gas: '0.0015 BNB', gasFiat: '฿3.50' },
+  };
+
+  // ===== Navigation =====
+  function goTo(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const el = document.getElementById(page);
+    if (el) el.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
+  function openGame(name) {
+    state.currentGame = name;
+    document.getElementById('webshop-game-title').textContent = name;
+    document.getElementById('webshop-game-name').textContent = name;
+    goTo('webshop');
+  }
+
+  function selectPackage(thPoint) {
+    state.selectedPackage = thPoint;
+    openTopupModal();
+  }
+
+  // ===== Modal helpers =====
+  function closeAllModals(e) {
+    if (e && e.target.closest('.modal')) return;
+    document.querySelectorAll('.modal-bg').forEach(m => m.classList.remove('show'));
+    state.pinValue = '';
+  }
+  function openModal(id) {
+    closeAllModals();
+    document.getElementById(id).classList.add('show');
+  }
+
+  function openTopupModal() {
+    openModal('payment-modal');
+    // Pre-select KUB on first show (visual cue)
+    document.querySelectorAll('.pay-row').forEach(r => r.classList.remove('selected'));
+  }
+
+  // ===== KUB Wallet Flow (Concept 2B — QR scan, no in-app login needed) =====
+  function selectKubPayment() {
+    document.querySelectorAll('.pay-row').forEach(r => r.classList.remove('selected'));
+    const kubRow = document.querySelector('.pay-row.kub-row');
+    kubRow.classList.add('selected');
+    // Go directly to confirm (no login required — user pays from external KUB Wallet app)
+    setTimeout(openKubConfirm, 250);
+  }
+  function loginKubWallet() {
+    // (kept for compatibility but not used in 2B flow)
+    state.kubLoggedIn = true;
+    openKubConfirm();
+  }
+
+  function openKubConfirm() {
+    const thb = state.selectedPackage;
+    const usdtBase = thb / RATE;
+    const discountAmt = usdtBase * DISCOUNT;
+    const usdtFinal = usdtBase - discountAmt;
+    const balance = 120.5;
+    const after = balance - usdtFinal;
+
+    document.getElementById('confirm-game-name').textContent = state.currentGame;
+    document.getElementById('confirm-th-point').textContent = thb.toFixed(2);
+    document.getElementById('confirm-thb').textContent = thb.toFixed(2);
+    document.getElementById('confirm-usdt').textContent = usdtBase.toFixed(3);
+    document.getElementById('confirm-discount').textContent = '-' + discountAmt.toFixed(3) + ' USDT';
+    document.getElementById('confirm-total').textContent = usdtFinal.toFixed(3);
+    document.getElementById('confirm-after').textContent = after.toFixed(3) + ' USDT';
+
+    openModal('kub-confirm-modal');
+  }
+
+  // ===== QR Payment Flow =====
+  let qrCountdownTimer = null;
+  let qrSecondsLeft = 0;
+  function proceedToQR() {
+    const thb = state.selectedPackage;
+    const usdtFinal = (thb / RATE) * (1 - DISCOUNT);
+    const thbAfter = thb * (1 - DISCOUNT);
+    const orderId = 'PM-ORD-' + Math.floor(Math.random() * 900000 + 100000);
+    document.getElementById('qr-amount').textContent = usdtFinal.toFixed(3);
+    document.getElementById('qr-item').textContent = state.currentGame + ' · ' + thb + ' TH Point';
+    document.getElementById('qr-total').textContent = usdtFinal.toFixed(3) + ' USDT';
+    document.getElementById('qr-thb').textContent = '฿' + thbAfter.toFixed(2);
+    document.getElementById('qr-order').textContent = orderId;
+    state.qrOrderId = orderId;
+    openModal('kub-qr-modal');
+    startQRCountdown();
+  }
+  function startQRCountdown() {
+    clearInterval(qrCountdownTimer);
+    qrSecondsLeft = 15 * 60; // 15:00
+    updateQRCountdownDisplay();
+    qrCountdownTimer = setInterval(() => {
+      qrSecondsLeft--;
+      if (qrSecondsLeft < 0) {
+        clearInterval(qrCountdownTimer);
+        const box = document.getElementById('qr-timer-box');
+        if (box) {
+          box.style.background = '#FEE2E2';
+          box.style.borderColor = '#F87171';
+          box.innerHTML = '<span class="text-base">⏰</span><span class="text-sm text-red-700">QR หมดอายุ · กรุณาเริ่มใหม่</span>';
+        }
+        return;
+      }
+      updateQRCountdownDisplay();
+    }, 1000);
+  }
+  function updateQRCountdownDisplay() {
+    const m = Math.floor(qrSecondsLeft / 60);
+    const s = qrSecondsLeft % 60;
+    const el = document.getElementById('qr-countdown');
+    if (el) el.textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    // Warning colors as time runs low
+    const box = document.getElementById('qr-timer-box');
+    if (box && qrSecondsLeft <= 60 && qrSecondsLeft > 0) {
+      box.style.background = '#FFE4E6';
+      box.style.borderColor = '#FB7185';
+    }
+  }
+  function confirmQRPayment() {
+    clearInterval(qrCountdownTimer);
+    openKubSuccess();
+  }
+
+  function openKubSuccess() {
+    const thb = state.selectedPackage;
+    const usdtFinal = (thb / RATE) * (1 - DISCOUNT);
+    const thbAfterDiscount = thb * (1 - DISCOUNT);
+    document.getElementById('success-game').textContent = state.currentGame;
+    document.getElementById('success-points').textContent = '+' + thb.toFixed(2);
+    document.getElementById('success-paid').textContent = usdtFinal.toFixed(3) + ' USDT';
+    document.getElementById('success-thb').textContent = '฿' + thbAfterDiscount.toFixed(2);
+    document.getElementById('success-tx').textContent = '0x' + Math.random().toString(16).substring(2, 6) + '…' + Math.random().toString(16).substring(2, 6) + ' ↗';
+    document.getElementById('success-order').textContent = state.qrOrderId || ('PM-ORD-' + Math.floor(Math.random() * 900000 + 100000));
+    openModal('kub-success-modal');
+  }
+
+  function completePurchase() {
+    // Update TH Point balance
+    state.thPointBalance += state.selectedPackage;
+    document.querySelectorAll('#th-point-balance').forEach(el => el.textContent = state.thPointBalance.toFixed(2));
+    closeAllModals();
+  }
+
+  // ===== USDT unified entry — opens wallet picker =====
+  function selectUsdtPayment() {
+    document.querySelectorAll('.pay-row').forEach(r => r.classList.remove('selected'));
+    const row = document.querySelector('.pay-row.kub-row');
+    if (row) row.classList.add('selected');
+    // Populate the picker summary with current amount
+    const thb = state.selectedPackage;
+    // Display the *cheaper* of the two (KUB Wallet with discount) as reference USDT — small UX nudge
+    const usdtRef = (thb / RATE);
+    document.getElementById('usdt-picker-thb').textContent = thb.toFixed(2);
+    document.getElementById('usdt-picker-usdt').textContent = usdtRef.toFixed(3);
+    setTimeout(() => openModal('usdt-wallet-picker-modal'), 220);
+  }
+
+  function pickKubWallet() {
+    state.selectedWallet = 'kub';
+    // Reset to default chain on wallet pick — user can change in confirm screen dropdown
+    state.selectedChain = 'kub';
+    updateNetworkDisplay();
+    closeAllModals();
+    setTimeout(() => selectKubPayment(), 120);
+  }
+
+  function pickMetamask() {
+    state.selectedWallet = 'mm';
+    state.selectedChain = 'kub';
+    updateNetworkDisplay();
+    closeAllModals();
+    setTimeout(() => selectMetamaskPayment(), 120);
+  }
+
+  // Chain dropdown — toggled inline in confirm screens
+  function toggleChainDropdown(id) {
+    const menu = document.getElementById('chain-dd-menu-' + id);
+    if (!menu) return;
+    const allMenus = document.querySelectorAll('.chain-dd-menu');
+    allMenus.forEach(m => { if (m.id !== menu.id) m.style.display = 'none'; });
+    menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+  }
+
+  function setChain(chainId, hostId) {
+    state.selectedChain = chainId;
+    updateNetworkDisplay();
+    // Close any open chain dropdown
+    document.querySelectorAll('.chain-dd-menu').forEach(m => m.style.display = 'none');
+    // If we are inside the metamask confirm modal we also need to refresh amounts shown
+    // (gas fee already updates via updateNetworkDisplay; amount stays same)
+  }
+
+  // Close chain dropdowns when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.chain-dd-wrap')) {
+      document.querySelectorAll('.chain-dd-menu').forEach(m => m.style.display = 'none');
+    }
+  });
+
+  function updateNetworkDisplay() {
+    const c = CHAINS[state.selectedChain];
+    // Update all network display spans across modals
+    document.querySelectorAll('.js-net-name').forEach(el => el.textContent = c.name);
+    document.querySelectorAll('.js-net-mainnet').forEach(el => el.textContent = c.mainnet);
+    document.querySelectorAll('.js-net-long').forEach(el => el.textContent = c.long);
+    document.querySelectorAll('.js-net-token').forEach(el => el.textContent = c.token);
+    document.querySelectorAll('.js-net-gas').forEach(el => el.textContent = c.gas);
+    document.querySelectorAll('.js-net-gas-fiat').forEach(el => el.textContent = c.gasFiat);
+    document.querySelectorAll('.js-net-dot').forEach(el => el.style.background = c.color);
+  }
+
+  // ===== MetaMask Flow =====
+  function selectMetamaskPayment() {
+    document.querySelectorAll('.pay-row').forEach(r => r.classList.remove('selected'));
+    const mmRow = document.querySelector('.pay-row.metamask-row');
+    if (mmRow) mmRow.classList.add('selected');
+    setTimeout(() => openModal('metamask-connect-modal'), 220);
+  }
+
+  function metamaskConnectApprove() {
+    const thb = state.selectedPackage;
+    // Metamask path: NO discount (only KUB Wallet gets the 3% promo)
+    const usdt = thb / RATE;
+    document.getElementById('mm-amount-usdt').textContent = usdt.toFixed(3);
+    document.getElementById('mm-amount-thb').textContent = thb.toFixed(2);
+    openModal('metamask-confirm-modal');
+  }
+
+  function metamaskConfirmTx() {
+    const hash = Array.from({length: 4}, () => Math.random().toString(16).substring(2, 6)).join('');
+    const shortHash = hash.substring(0, 4) + '...' + hash.substring(hash.length - 4);
+    document.getElementById('mm-tx-hash').textContent = shortHash;
+    openModal('metamask-processing-modal');
+    setTimeout(() => metamaskShowSuccess(shortHash), 2400);
+  }
+
+  function metamaskShowSuccess(shortHash) {
+    const thb = state.selectedPackage;
+    const usdt = thb / RATE;
+    document.getElementById('mm-success-game').textContent = state.currentGame;
+    document.getElementById('mm-success-points').textContent = thb.toFixed(2);
+    document.getElementById('mm-success-paid').textContent = usdt.toFixed(3) + ' USDT';
+    document.getElementById('mm-success-thb').textContent = '฿' + thb.toFixed(2);
+    document.getElementById('mm-success-tx').textContent = '0x' + shortHash;
+    document.getElementById('mm-success-order').textContent = 'PM-ORD-' + Math.floor(Math.random() * 900000 + 100000);
+    openModal('metamask-success-modal');
+  }
+</script>
+</body>
+</html>

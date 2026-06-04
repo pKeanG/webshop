@@ -1,0 +1,45 @@
+{
+  "name": "@webshop-gamefi/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Smart contracts for Webshop GameFi — KUB Chain (Bitkub Chain). Interface scaffolding only — real implementations pending legal opinion on token classification.",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "clean": "hardhat clean",
+    "node": "hardhat node",
+    "deploy:testnet": "hardhat run scripts/deploy.ts --network bitkubTestnet",
+    "lint": "solhint 'contracts/**/*.sol'",
+    "format": "prettier --write 'contracts/**/*.sol' 'scripts/**/*.ts' 'test/**/*.ts'"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "5.0.0",
+    "@nomicfoundation/hardhat-ethers": "3.0.8",
+    "@nomicfoundation/hardhat-verify": "2.0.10",
+    "@nomicfoundation/hardhat-chai-matchers": "2.0.7",
+    "@nomicfoundation/hardhat-network-helpers": "1.0.12",
+    "@nomicfoundation/hardhat-ignition": "0.15.10",
+    "@nomicfoundation/hardhat-ignition-ethers": "0.15.10",
+    "@typechain/hardhat": "9.1.0",
+    "@typechain/ethers-v6": "0.5.1",
+    "@types/chai": "4.3.16",
+    "@types/mocha": "10.0.7",
+    "@types/node": "20.14.10",
+    "chai": "4.5.0",
+    "dotenv": "16.4.5",
+    "ethers": "6.13.2",
+    "hardhat": "2.26.0",
+    "hardhat-gas-reporter": "2.2.1",
+    "prettier": "3.3.3",
+    "prettier-plugin-solidity": "1.4.1",
+    "solhint": "5.0.3",
+    "solidity-coverage": "0.8.13",
+    "ts-node": "10.9.2",
+    "typechain": "8.3.2",
+    "typescript": "5.5.4"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "5.0.2",
+    "@openzeppelin/contracts-upgradeable": "5.0.2"
+  }
+}
